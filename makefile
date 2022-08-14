@@ -14,6 +14,7 @@ OUTPUT=main
 
 CXX=clang++
 FLAGS=-std=c++20 -Wall
+LIBRARIES=-lSDL2
 DEBUG_FLAGS=-g
 BUILD_FLAGS=-O3 -march=native -mtune=native
 
@@ -31,13 +32,13 @@ debug: debug/$(OUTPUT)
 build/$(OUTPUT): $(INPUTS)
 	@mkdir -p build
 	@echo Compiling $@
-	@$(CXX) -o $@ $^ $(FLAGS) $(BUILD_FLAGS) 
+	@$(CXX) -o $@ $^ $(FLAGS) $(BUILD_FLAGS) $(LIBRARIES)
 
 # Merging all .o files into output file
 debug/$(OUTPUT): $(OUTPUTS)
 	@mkdir -p debug
 	@echo Compiling $@
-	@$(CXX) -o $@ $^ $(FLAGS) $(DEBUG_FLAGS)
+	@$(CXX) -o $@ $^ $(FLAGS) $(DEBUG_FLAGS) $(LIBRARIES)
 
 # Incrementally compiling .cpp files into .o files
 $(OUTPUTS): $(OUTPUT_DIR)/%.o: $(INPUT_DIR)/%.cpp

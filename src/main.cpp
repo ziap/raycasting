@@ -1,8 +1,7 @@
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
+#include "game.hpp"
 
 int main() {
-  printf("Hello, world!\n");
+  Game game;
+  game.run();
   return 0;
 }
