@@ -1,7 +1,8 @@
 #include "game.hpp"
 
 int main() {
-  Game game;
-  game.run();
+  Game::Start();
+  Game::Run();
+  Game::Stop();
   return 0;
 }

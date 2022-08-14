@@ -16,7 +16,7 @@ CXX=clang++
 FLAGS=-std=c++20 -Wall
 LIBRARIES=-lSDL2
 DEBUG_FLAGS=-g
-BUILD_FLAGS=-O3 -march=native -mtune=native
+BUILD_FLAGS=-O2 -march=native -mtune=native
 
 INPUT_DIR=src
 OUTPUT_DIR=obj

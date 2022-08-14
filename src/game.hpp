@@ -1,19 +1,10 @@
 #pragma once
-#include <SDL2/SDL.h>
 
-class Game {
- public:
-  Game();
-  ~Game();
+#include <SDL2/SDL_stdinc.h>
 
-  void run();
+namespace Game {
 
-  Uint64 delta_time;
-
- private:
-  const static int WINDOW_WIDTH;
-  const static int WINDOW_HEIGHT;
-
-  SDL_Window *window;
-  SDL_Renderer *renderer;
-};
+void Start();
+void Stop();
+void Run();
+}  // namespace Game
