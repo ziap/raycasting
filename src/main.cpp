@@ -1,9 +1,8 @@
-#include <iostream>
-
-#include "foo.hpp"
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 int main() {
-  std::cout << "Hello, " << foo::bar << "!\n";
-
+  printf("Hello, world!\n");
   return 0;
 }
