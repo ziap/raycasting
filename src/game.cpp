@@ -23,7 +23,7 @@ void Game::Run() {
   while (Input::HandleEvent(&event)) {
     frames++;
     auto now = SDL_GetTicks64();
-    GameState::Update(now - last_frame);
+    GameState::Update((float)(now - last_frame) / 1000.0f);
     Renderer::Render();
     last_frame = now;
     auto delta_time = now - last_fps_update;

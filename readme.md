@@ -4,11 +4,11 @@ Old-school raycasting pseudo-3D game engine made with C++. My first ambitious pr
 
 ## Requirements
 
-- A C++ compiler that supports C++20. *
+- A C++ compiler that supports C++20.
 - GNU make.
 - [SDL2](https://www.libsdl.org/download-2.0.php).
 
-*: The default compiler is `clang` so you need to edit the [makefile](makefile)
+The default compiler is `clang++` so you need to edit the [makefile](makefile)
 if you want to use another compiler.
 
 ## Build and run
@@ -19,7 +19,7 @@ Run the copiled binary `build/main`.
 
 ## Feature goals
 
- - Working raycasting engine.
+ - High resolution raycasting engine.
  - Texture mapping.
  - Load textures and audios during build step.
  - Entites and projectiles.
