@@ -10,11 +10,10 @@
 # Requirements:
 #  - GNU Make
 #  - A C++ Compiler (clang is prefered and is the default)
-#  - SDL2
+#  - SDL2 (not required for targetting wasm, use <canvas> image data instead)
 #
 # Future requirements:
 #  - Python and PIP (for loading images at compile time)
-#  - Emscripten (for targetting WebAssembly)
 # 
 # See README.MD for more information about the project.
 # See LICENSE file for copyright and license details.
