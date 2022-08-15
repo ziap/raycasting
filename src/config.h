@@ -1,10 +1,10 @@
 #pragma once
 
-#include <cmath>
+#define RENDERER_SDL2 0
+#define RENDERER_WASM 1
 
 namespace Config {
 constexpr int WIDTH = 1080;
 constexpr int HEIGHT = 720;
-constexpr int FOV = 60;
-constexpr float DEG2RAD = M_PI / 180.0f;
+constexpr int FOV = 70;
 }  // namespace Config

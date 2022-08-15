@@ -1,8 +1,8 @@
-#include "game.hpp"
+#include "renderer.hpp"
 
 int main() {
-  Game::Start();
-  Game::Run();
-  Game::Stop();
+  Renderer::InitWindow();
+  Renderer::GameLoop();
+  Renderer::DestroyWindow();
   return 0;
 }

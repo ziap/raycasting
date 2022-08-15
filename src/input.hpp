@@ -1,12 +1,19 @@
 #pragma once
 
-#include <SDL2/SDL_events.h>
 namespace Input {
+
+enum KeyType { KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT, KEY_OTHER };
 
 extern bool mouse_down, mouse_move;
 
 extern int mouse_x, mouse_y;
 extern int input_x, input_y;
 
-extern bool HandleEvent(SDL_Event*);
+void MouseDown(void);
+void MouseUp(void);
+
+void KeyDown(KeyType);
+void KeyUp(KeyType);
+
+void MouseMove(int, int);
 }  // namespace Input

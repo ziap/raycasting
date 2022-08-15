@@ -3,5 +3,5 @@
 #include "gamestate.hpp"
 
 namespace FloorCaster {
-void CastFloor(Uint32*);
+void CastFloor(unsigned*);
 };  // namespace FloorCaster
