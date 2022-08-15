@@ -18,7 +18,7 @@ void Game::Stop() {
 void Game::Run() {
   auto last_frame = SDL_GetTicks64();
   auto last_fps_update = last_frame;
-  auto frames = 0;
+  auto frames = 0.0;
   SDL_Event event;
   while (Input::HandleEvent(&event)) {
     frames++;
@@ -26,10 +26,11 @@ void Game::Run() {
     GameState::Update(now - last_frame);
     Renderer::Render();
     last_frame = now;
-    if (now - last_fps_update > 1000) {
-      INFO("FPS: %d\n", frames);
+    auto delta_time = now - last_fps_update;
+    if (delta_time >= 1000) {
+      INFO("FPS: %f\n", frames * 1000 / delta_time);
       last_fps_update = now;
-      frames = 0;
+      frames = 1;
     }
   }
 }
