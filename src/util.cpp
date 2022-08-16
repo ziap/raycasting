@@ -10,7 +10,6 @@ float Math::cos(float x) { return Math_cos(x); }
 float Math::sin(float x) { return Math_sin(x); }
 
 #else
-#include <algorithm>
 #include <cmath>
 
 float Math::cos(float x) { return std::cos(x); }

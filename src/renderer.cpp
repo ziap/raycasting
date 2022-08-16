@@ -125,10 +125,4 @@ void Renderer::GameLoop() {
   }
 }
 
-#else
-
-void Renderer::InitWindow() {}
-void Renderer::DestroyWindow() {}
-void Renderer::GameLoop() {}
-
 #endif

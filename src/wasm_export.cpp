@@ -8,6 +8,7 @@
 unsigned image_buffer[Config::WIDTH * Config::HEIGHT] = {0};
 
 extern "C" {
+void Init() { Resize(Config::WIDTH, Config::HEIGHT); }
 void GameState_Update(float time) { GameState::Update(time); }
 void Raycaster_Render() { return Raycaster::Render(image_buffer); };
 void Input_MouseDown() { return Input::MouseDown(); }
