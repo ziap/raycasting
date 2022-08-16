@@ -25,11 +25,12 @@ OUTPUT=main
 
 CXX=clang++
 FLAGS=-std=c++20 -Wall
-LIBRARIES=-lSDL2
+LIBRARIES=$$(sdl2-config --libs)
 DEBUG_FLAGS=-g -Wextra
-BUILD_FLAGS=-O3 -march=native -mtune=native -flto -Wl,-lto-O3
+BUILD_FLAGS=-O3 -march=native -mtune=native
 WASM_FLAGS=--target=wasm32 -Os -flto -nostdlib -Wl,--no-entry, \
-					 -Wl,--export-all, -Wl,-lto-O3 -DUSE_WASM=true
+					 -Wl,--export-all, -Wl,-lto-O3 -DUSE_WASM=true \
+					 -Wl,--allow-undefined
 INPUT_DIR=src
 OUTPUT_DIR=obj
 
@@ -67,3 +68,4 @@ clean:
 	rm -rf $(OUTPUT_DIR)
 	rm -rf debug
 	rm -rf build
+	rm -f web/$(OUTPUT).wasm

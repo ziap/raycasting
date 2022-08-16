@@ -1,8 +1,8 @@
 #include "renderer.hpp"
 
 #include "config.h"
-#include "floorcaster.hpp"
 #include "input.hpp"
+#include "raycaster.hpp"
 #include "util.hpp"
 
 #if !USE_WASM
@@ -37,10 +37,11 @@ void Renderer::InitWindow() {
   INFO("Renderer: %s\n", renderer_info.name);
 
   screen_texture = SDL_CreateTexture(
-    renderer, pf, SDL_TEXTUREACCESS_TARGET, Config::WIDTH, Config::HEIGHT
+    renderer, SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_TARGET, Config::WIDTH,
+    Config::HEIGHT
   );
   screen_surface = SDL_CreateRGBSurface(
-    0, Config::WIDTH, Config::HEIGHT, 32, 0x00ff0000, 0x0000ff00, 0x000000ff,
+    0, Config::WIDTH, Config::HEIGHT, 32, 0x000000ff, 0x0000ff00, 0x00ff0000,
     0xff000000
   );
 
@@ -57,10 +58,10 @@ void Renderer::DestroyWindow() {
 
 static Input::KeyType GetKeyType(SDL_Keycode key) {
   switch (key) {
-    case SDLK_UP: return Input::KEY_UP;
-    case SDLK_DOWN: return Input::KEY_DOWN;
-    case SDLK_LEFT: return Input::KEY_LEFT;
-    case SDLK_RIGHT: return Input::KEY_RIGHT;
+      // case SDLK_UP: return Input::KEY_UP;
+      // case SDLK_DOWN: return Input::KEY_DOWN;
+      // case SDLK_LEFT: return Input::KEY_LEFT;
+      // case SDLK_RIGHT: return Input::KEY_RIGHT;
 
     case SDLK_w: return Input::KEY_UP;
     case SDLK_s: return Input::KEY_DOWN;
@@ -70,32 +71,32 @@ static Input::KeyType GetKeyType(SDL_Keycode key) {
   }
 }
 
-static bool HandleEvent(SDL_Event *e) {
-  SDL_PollEvent(e);
-  switch (e->type) {
-    case SDL_QUIT: return false;
-    case SDL_MOUSEBUTTONDOWN: Input::MouseDown(); break;
-    case SDL_MOUSEBUTTONUP: Input::MouseUp(); break;
-    case SDL_KEYDOWN: {
-      auto key_type = GetKeyType(e->key.keysym.sym);
-      Input::KeyDown(key_type);
-      break;
+static bool HandleEvent() {
+  SDL_Event e;
+  while (SDL_PollEvent(&e)) switch (e.type) {
+      case SDL_QUIT: return false;
+      case SDL_MOUSEBUTTONDOWN: Input::MouseDown(); break;
+      case SDL_MOUSEBUTTONUP: Input::MouseUp(); break;
+      case SDL_KEYDOWN: {
+        auto key_type = GetKeyType(e.key.keysym.sym);
+        Input::KeyDown(key_type);
+        break;
+      }
+      case SDL_KEYUP: {
+        auto key_type = GetKeyType(e.key.keysym.sym);
+        Input::KeyUp(key_type);
+        break;
+      }
+      case SDL_MOUSEMOTION: {
+        Input::MouseMove(e.motion.xrel, e.motion.yrel);
+        break;
+      }
     }
-    case SDL_KEYUP: {
-      auto key_type = GetKeyType(e->key.keysym.sym);
-      Input::KeyUp(key_type);
-      break;
-    }
-    case SDL_MOUSEMOTION: {
-      Input::MouseMove(e->motion.xrel, e->motion.yrel);
-      break;
-    }
-  }
   return true;
 }
 
 static void Render() {
-  FloorCaster::CastFloor(Renderer::screen_buffer);
+  Raycaster::Render(Renderer::screen_buffer);
 
   SDL_UpdateTexture(
     screen_texture, nullptr, screen_surface->pixels, screen_surface->pitch
@@ -109,8 +110,7 @@ void Renderer::GameLoop() {
   auto last_frame = SDL_GetTicks64();
   auto last_fps_update = last_frame;
   auto frames = 0.0;
-  SDL_Event event;
-  while (HandleEvent(&event)) {
+  while (HandleEvent()) {
     frames++;
     auto now = SDL_GetTicks64();
     GameState::Update((float)(now - last_frame) / 1000.0f);

@@ -1,11 +1,14 @@
 #pragma once
 
 namespace Math {
-constexpr float deg2rad = 3.1415926535897 / 180.0;
+constexpr float deg2rad = 3.141592653589793 / 180.0;
+constexpr float insqrt2 = 1.0 / 1.4142135623730951;
+
+int clamp(int, int, int);
+int round(float);
 
 float sin(float);
 float cos(float);
-float round(float);
 }  // namespace Math
 
 #if USE_WASM

@@ -1,3 +1,4 @@
+#if !USE_WASM
 #include "renderer.hpp"
 
 int main() {
@@ -6,3 +7,4 @@ int main() {
   Renderer::DestroyWindow();
   return 0;
 }
+#endif

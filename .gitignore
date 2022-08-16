@@ -1,3 +1,4 @@
 obj/
 debug/
 build/
+web/main.wasm
