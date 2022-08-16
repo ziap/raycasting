@@ -11,15 +11,15 @@ constexpr float half_fov = FOV >> 1;
 
 void FloorCaster::CastFloor(unsigned *buffer) {
   for (auto x = 0; x < WIDTH; x++) {
-    auto cast_dir = ((float)x / WIDTH * FOV - half_fov) * DEG2RAD;
+    auto cast_dir = ((float)x / WIDTH * FOV - half_fov) * Math::deg2rad;
     auto angle_x = GameState::player_rot + cast_dir;
-    auto sin_x = std::sin(angle_x);
-    auto cos_x = std::cos(angle_x);
+    auto sin_x = Math::sin(angle_x);
+    auto cos_x = Math::cos(angle_x);
     for (auto y = 0; y < floor_height; y++) {
-      auto n = floor_height / (floor_height - y) / std::cos(cast_dir);
+      auto n = floor_height / (floor_height - y) / Math::cos(cast_dir);
       auto hit_x = GameState::player_x + sin_x * n;
       auto hit_y = GameState::player_y + cos_x * n;
-      if (((int)std::round(hit_x) % 2 != 0) == ((int)std::round(hit_y) % 2 != 0))
+      if (((int)Math::round(hit_x) % 2 != 0) == ((int)Math::round(hit_y) % 2 != 0))
         buffer[x + (HEIGHT - y - 1) * WIDTH] = 0;
       else
         buffer[x + (HEIGHT - y - 1) * WIDTH] = 0xffffff;

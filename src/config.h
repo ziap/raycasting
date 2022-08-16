@@ -1,7 +1,8 @@
 #pragma once
 
-#define RENDERER_SDL2 0
-#define RENDERER_WASM 1
+#ifndef USE_WASM
+#define USE_WASM false
+#endif
 
 namespace Config {
 constexpr int WIDTH = 1080;

@@ -5,7 +5,7 @@
 #include "input.hpp"
 #include "util.hpp"
 
-#if RENDERER == RENDERER_SDL2
+#if !USE_WASM
 
 #include <SDL2/SDL.h>
 
@@ -125,14 +125,10 @@ void Renderer::GameLoop() {
   }
 }
 
-#elif RENDERER == RENDERER_WASM
+#else
 
 void Renderer::InitWindow() {}
 void Renderer::DestroyWindow() {}
 void Renderer::GameLoop() {}
-
-#else
-
-#error "Unknown Renrering backend"
 
 #endif

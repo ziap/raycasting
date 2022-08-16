@@ -1,17 +1,19 @@
 #pragma once
 
-constexpr float DEG2RAD = 3.1415926535897 / 180.0;
+namespace Math {
+constexpr float deg2rad = 3.1415926535897 / 180.0;
 
-#if RENDERER == RENDERER_WASM
-extern float cos(float);
-extern float sin(float);
-extern float round(float);
+float sin(float);
+float cos(float);
+float round(float);
+}  // namespace Math
+
+#if USE_WASM
 
 #define INFO(...)
 #define WARN(...)
 
 #else
-#include <cmath>
 #include <cstdio>
 
 #define INFO(...)                                                    \

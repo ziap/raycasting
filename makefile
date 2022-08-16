@@ -24,11 +24,12 @@
 OUTPUT=main
 
 CXX=clang++
-FLAGS=-std=c++20 -Wall -pthread
+FLAGS=-std=c++20 -Wall
 LIBRARIES=-lSDL2
 DEBUG_FLAGS=-g -Wextra
-BUILD_FLAGS=-O3 -march=native -mtune=native
-
+BUILD_FLAGS=-O3 -march=native -mtune=native -flto -Wl,-lto-O3
+WASM_FLAGS=--target=wasm32 -Os -flto -nostdlib -Wl,--no-entry, \
+					 -Wl,--export-all, -Wl,-lto-O3 -DUSE_WASM=true
 INPUT_DIR=src
 OUTPUT_DIR=obj
 
@@ -38,6 +39,7 @@ OUTPUTS=$(patsubst %.cpp, $(OUTPUT_DIR)/%.o, $(notdir $(INPUTS)))
 
 build: build/$(OUTPUT)
 debug: debug/$(OUTPUT)
+web: web/$(OUTPUT).wasm
 
 # Directly build output file with .cpp files
 build/$(OUTPUT): $(INPUTS)
@@ -50,6 +52,10 @@ debug/$(OUTPUT): $(OUTPUTS)
 	@mkdir -p debug
 	@echo Compiling $@
 	@$(CXX) -o $@ $^ $(FLAGS) $(DEBUG_FLAGS) $(LIBRARIES)
+
+web/$(OUTPUT).wasm: $(INPUTS)
+	@echo Compiling $@
+	@$(CXX) -o $@ $^ $(FLAGS) $(WASM_FLAGS)
 
 # Incrementally compiling .cpp files into .o files
 $(OUTPUTS): $(OUTPUT_DIR)/%.o: $(INPUT_DIR)/%.cpp
