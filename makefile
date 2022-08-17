@@ -48,11 +48,14 @@ build: clean_assets assets build/$(OUTPUT)
 debug: clean_assets assets debug/$(OUTPUT)
 web: clean_assets assets web/$(OUTPUT).wasm
 
+# Always recompile build target
+.PHONY: build/$(OUTPUT) clean_assets clean
+
 # Directly build output file with .cpp files
 build/$(OUTPUT): $(INPUTS)
 	@mkdir -p build
 	@echo Compiling $@
-	@$(CXX) -o $@ $^ $(FLAGS) $(BUILD_FLAGS) $(LIBRARIES)
+	@$(CXX) -o $@ $(INPUTS) $(FLAGS) $(BUILD_FLAGS) $(LIBRARIES)
 
 # Merging all .o files into output file
 debug/$(OUTPUT): $(OUTPUTS)
