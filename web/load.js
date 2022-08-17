@@ -26,7 +26,7 @@ let prev_time = performance.now();
 
 const frame = () => {
   const time = performance.now();
-  document.title = 'Raycast engine FPS: ' + ~~(1000 / (time - prev_time))
+  document.title = 'Raycast engine - FPS: ' + ~~(1000 / (time - prev_time))
   instance.exports.GameState_Update((time - prev_time) / 1000)
   instance.exports.Raycaster_Render()
   canvas.getContext('2d').putImageData(image_data, 0, 0)

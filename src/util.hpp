@@ -6,8 +6,6 @@ constexpr float deg2rad = pi / 180.0;
 constexpr float insqrt2 = 1.0 / 1.4142135623730951;
 
 int clamp(int, int, int);
-float abs(float);
-int round(float);
 
 float sin(float);
 float cos(float);

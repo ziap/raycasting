@@ -1,4 +1,11 @@
+# Compiled binaries including WASM
 obj/
 debug/
 build/
 web/main.wasm
+
+# Python scripting environment
+.penv/
+
+# preprocessed images
+src/texture_*

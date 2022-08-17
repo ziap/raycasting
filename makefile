@@ -11,9 +11,7 @@
 #  - GNU Make
 #  - A C++ Compiler (clang is prefered and is the default)
 #  - SDL2 (not required for targetting wasm, use <canvas> image data instead)
-#
-# Future requirements:
-#  - Python and PIP (for loading images at compile time)
+#  - Python, PIP and python-venv (you don't need to do anything)
 # 
 # See README.MD for more information about the project.
 # See LICENSE file for copyright and license details.
@@ -26,21 +24,29 @@ OUTPUT=main
 CXX=clang++
 FLAGS=-std=c++20 -Wall
 LIBRARIES=$$(sdl2-config --libs)
-DEBUG_FLAGS=-g -pg -Wextra
+DEBUG_FLAGS=-g -Wextra
 BUILD_FLAGS=-O3 -march=native -mtune=native
 WASM_FLAGS=--target=wasm32 -O3 -flto -nostdlib -Wl,--no-entry, \
 					 -Wl,--export-all, -Wl,-lto-O3 -DUSE_WASM=true \
 					 -Wl,--allow-undefined
 INPUT_DIR=src
 OUTPUT_DIR=obj
+TEXTURE_DIR=assets
 
 # Get list of input and output files
 INPUTS=$(wildcard $(INPUT_DIR)/*.cpp)
 OUTPUTS=$(patsubst %.cpp, $(OUTPUT_DIR)/%.o, $(notdir $(INPUTS)))
 
-build: build/$(OUTPUT)
-debug: debug/$(OUTPUT)
-web: web/$(OUTPUT).wasm
+TEXTURE_INPUTS=$(wildcard $(TEXTURE_DIR)/*.png)
+TEXTURE_OUTPUTS=$(patsubst %.png, $(INPUT_DIR)/texture_%.h, \
+								$(notdir $(TEXTURE_INPUTS)))
+
+VENV_NAME=.penv
+ACTIVATE_VENV=. $(VENV_NAME)/bin/activate
+
+build: clean_assets assets build/$(OUTPUT)
+debug: clean_assets assets debug/$(OUTPUT)
+web: clean_assets assets web/$(OUTPUT).wasm
 
 # Directly build output file with .cpp files
 build/$(OUTPUT): $(INPUTS)
@@ -64,8 +70,23 @@ $(OUTPUTS): $(OUTPUT_DIR)/%.o: $(INPUT_DIR)/%.cpp
 	@mkdir -p $(OUTPUT_DIR)
 	@$(CXX) -c $< -o $@ $(FLAGS) $(DEBUG_FLAGS) 
 
-clean:
+assets: $(VENV_NAME) $(TEXTURE_OUTPUTS)
+
+$(TEXTURE_OUTPUTS): $(INPUT_DIR)/texture_%.h: $(TEXTURE_DIR)/%.png
+	@echo Generating $(notdir $@)
+	@$(ACTIVATE_VENV) && scripts/loadassets.py $< $(notdir $@) > $@
+
+clean_assets:
+	rm -f src/texture_*
+
+clean: clean_assets
 	rm -rf $(OUTPUT_DIR)
 	rm -rf debug
 	rm -rf build
 	rm -f web/$(OUTPUT).wasm
+
+$(VENV_NAME):
+	@echo Creating the virtual environment
+	@python -m venv $(VENV_NAME)
+	@echo Installing packages
+	@$(ACTIVATE_VENV) && pip install opencv-python numpy
