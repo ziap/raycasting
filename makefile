@@ -19,7 +19,7 @@
 ##############################################################################
 
 # The name of your program
-OUTPUT=main
+OUTPUT=raycaster
 
 CXX=clang++
 FLAGS=-std=c++20 -Wall
@@ -48,8 +48,8 @@ build: clean_assets assets build/$(OUTPUT)
 debug: clean_assets assets debug/$(OUTPUT)
 web: clean_assets assets web/$(OUTPUT).wasm
 
-# Always recompile build target
-.PHONY: build/$(OUTPUT) clean_assets clean
+# Always recompile unless in debug mode
+.PHONY: build/$(OUTPUT) web/$(OUTPUT).wasm clean_assets clean
 
 # Directly build output file with .cpp files
 build/$(OUTPUT): $(INPUTS)

@@ -2,7 +2,7 @@
 obj/
 debug/
 build/
-web/main.wasm
+web/raycaster.wasm
 
 # Python scripting environment
 .penv/
