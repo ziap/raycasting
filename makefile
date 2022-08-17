@@ -26,7 +26,7 @@ OUTPUT=main
 CXX=clang++
 FLAGS=-std=c++20 -Wall
 LIBRARIES=$$(sdl2-config --libs)
-DEBUG_FLAGS=-g -Wextra
+DEBUG_FLAGS=-g -pg -Wextra
 BUILD_FLAGS=-O3 -march=native -mtune=native
 WASM_FLAGS=--target=wasm32 -O3 -flto -nostdlib -Wl,--no-entry, \
 					 -Wl,--export-all, -Wl,-lto-O3 -DUSE_WASM=true \

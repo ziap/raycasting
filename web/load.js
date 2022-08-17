@@ -9,8 +9,6 @@ const env = {
   }
 }
 
-console.log(canvas)
-
 const { instance } = await WebAssembly.instantiateStreaming(fetch('./main.wasm'), { env })
 
 instance.exports.Init()
@@ -24,15 +22,16 @@ const image_buffer = new Uint8ClampedArray(
 )
 const image_data = new ImageData(image_buffer, canvas.width)
 
-let prev_time = 0;
-const frame = (time) => {
-  if (time) {
-    instance.exports.GameState_Update((time - prev_time) / 1000)
-    instance.exports.Raycaster_Render(pointer)
-    canvas.getContext('2d').putImageData(image_data, 0, 0)
-    prev_time = time;
-  }
-  requestAnimationFrame(frame)
+let prev_time = performance.now();
+
+const frame = () => {
+  const time = performance.now();
+  document.title = 'Raycast engine FPS: ' + ~~(1000 / (time - prev_time))
+  instance.exports.GameState_Update((time - prev_time) / 1000)
+  instance.exports.Raycaster_Render()
+  canvas.getContext('2d').putImageData(image_data, 0, 0)
+  prev_time = time;
+  setTimeout(frame, 0);
 }
 
 addEventListener('keydown', e => {

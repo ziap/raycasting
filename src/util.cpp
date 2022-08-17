@@ -8,11 +8,13 @@ int Math::round(float x) { return (int)(x + 0.5f - (x < 0)); }
 
 float Math::cos(float x) { return Math_cos(x); }
 float Math::sin(float x) { return Math_sin(x); }
+float Math::abs(float x) { return x < 0 ? -x : x; }
 
 #else
 #include <cmath>
 
 float Math::cos(float x) { return std::cos(x); }
 float Math::sin(float x) { return std::sin(x); }
+float Math::abs(float x) { return std::abs(x); }
 
 #endif

@@ -13,11 +13,11 @@ void GameState::Update(float delta_time) {
     player_rot += (float)Input::mouse_x / Config::WIDTH * 1000 * delta_time;
   }
   constexpr auto rad_90 = 90.0f * Math::deg2rad;
-  auto speed =
+  const auto speed =
     5.0f *
     ((Input::input_x != 0 && Input::input_y != 0) ? Math::insqrt2 : 1.0f);
-  auto speed_x = speed * Input::input_x * delta_time;
-  auto speed_y = speed * Input::input_y * delta_time;
+  const auto speed_x = speed * Input::input_x * delta_time;
+  const auto speed_y = speed * Input::input_y * delta_time;
 
   player_x += speed_x * Math::sin(player_rot + rad_90);
   player_y += speed_x * Math::cos(player_rot + rad_90);

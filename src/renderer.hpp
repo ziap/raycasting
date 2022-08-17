@@ -1,13 +1,15 @@
 #pragma once
 
-#if !USE_WASM
+#include "config.h"
 
 namespace Renderer {
-extern unsigned *screen_buffer;
 
+#if USE_WASM
+extern unsigned screen_buffer[];
+#else
+extern unsigned *screen_buffer;
 void InitWindow(void);
 void DestroyWindow(void);
 void GameLoop(void);
-}  // namespace Renderer
-
 #endif
+}  // namespace Renderer

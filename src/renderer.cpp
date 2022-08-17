@@ -96,7 +96,7 @@ static bool HandleEvent() {
 }
 
 static void Render() {
-  Raycaster::Render(Renderer::screen_buffer);
+  Raycaster::Render();
 
   SDL_UpdateTexture(
     screen_texture, nullptr, screen_surface->pixels, screen_surface->pitch
@@ -124,5 +124,8 @@ void Renderer::GameLoop() {
     }
   }
 }
+#else
+
+unsigned Renderer::screen_buffer[Config::WIDTH * Config::HEIGHT] = {0};
 
 #endif

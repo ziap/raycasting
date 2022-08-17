@@ -3,5 +3,5 @@
 #include "gamestate.hpp"
 
 namespace Raycaster {
-void Render(unsigned* buffer);
+void Render();
 };  // namespace Raycaster
