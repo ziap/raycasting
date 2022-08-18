@@ -1,6 +1,7 @@
 #include "renderer.hpp"
 
 #include "config.h"
+#include "gamestate.hpp"
 #include "input.hpp"
 #include "raycaster.hpp"
 #include "util.hpp"
@@ -25,7 +26,7 @@ void Renderer::InitWindow() {
 
   window = SDL_CreateWindow(
     "Raycast engine", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-    Config::WIDTH, Config::HEIGHT, SDL_WINDOW_SHOWN
+    Config::Display::WIDTH, Config::Display::HEIGHT, SDL_WINDOW_SHOWN
   );
   auto pf = SDL_GetWindowPixelFormat(window);
   auto pf_name = SDL_GetPixelFormatName(pf);
@@ -37,12 +38,12 @@ void Renderer::InitWindow() {
   INFO("Renderer: %s\n", renderer_info.name);
 
   screen_texture = SDL_CreateTexture(
-    renderer, SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_TARGET, Config::WIDTH,
-    Config::HEIGHT
+    renderer, SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_TARGET,
+    Config::Display::WIDTH, Config::Display::HEIGHT
   );
   screen_surface = SDL_CreateRGBSurface(
-    0, Config::WIDTH, Config::HEIGHT, 32, 0x000000ff, 0x0000ff00, 0x00ff0000,
-    0xff000000
+    0, Config::Display::WIDTH, Config::Display::HEIGHT, 32, 0x000000ff,
+    0x0000ff00, 0x00ff0000, 0xff000000
   );
 
   screen_buffer = (Uint32 *)screen_surface->pixels;
@@ -107,12 +108,12 @@ static void Render() {
 }
 
 void Renderer::GameLoop() {
-  auto last_frame = SDL_GetTicks64();
+  auto last_frame = SDL_GetTicks();
   auto last_fps_update = last_frame;
-  auto frames = 0.0;
+  auto frames = 0.0f;
   while (HandleEvent()) {
     frames++;
-    auto now = SDL_GetTicks64();
+    auto now = SDL_GetTicks();
     GameState::Update((float)(now - last_frame) / 1000.0f);
     Render();
     last_frame = now;
@@ -126,6 +127,11 @@ void Renderer::GameLoop() {
 }
 #else
 
-unsigned Renderer::screen_buffer[Config::WIDTH * Config::HEIGHT] = {0};
+#define SCREEN_BUFFER_SIZE (Config::Display::WIDTH * Config::Display::HEIGHT)
+
+// Export a single empty screen buffer
+// - It will be used by the raycaster to draw pixel to
+// - The memory address will be used bu an image data to update the canvas
+unsigned Renderer::screen_buffer[SCREEN_BUFFER_SIZE] = {0};
 
 #endif

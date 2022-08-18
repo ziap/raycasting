@@ -27,8 +27,7 @@ LIBRARIES=$$(sdl2-config --libs)
 DEBUG_FLAGS=-g -Wextra
 BUILD_FLAGS=-O3 -march=native -mtune=native
 WASM_FLAGS=--target=wasm32 -O3 -flto -nostdlib -Wl,--no-entry, \
-					 -Wl,--export-all, -Wl,-lto-O3 -DUSE_WASM=true \
-					 -Wl,--allow-undefined
+	-Wl,--export-all, -Wl,-lto-O3 -DUSE_WASM=true -Wl,--allow-undefined
 INPUT_DIR=src
 OUTPUT_DIR=obj
 TEXTURE_DIR=assets
@@ -39,7 +38,7 @@ OUTPUTS=$(patsubst %.cpp, $(OUTPUT_DIR)/%.o, $(notdir $(INPUTS)))
 
 TEXTURE_INPUTS=$(wildcard $(TEXTURE_DIR)/*.png)
 TEXTURE_OUTPUTS=$(patsubst %.png, $(INPUT_DIR)/texture_%.h, \
-								$(notdir $(TEXTURE_INPUTS)))
+	$(notdir $(TEXTURE_INPUTS)))
 
 VENV_NAME=.penv
 ACTIVATE_VENV=. $(VENV_NAME)/bin/activate

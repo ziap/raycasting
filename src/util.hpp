@@ -7,8 +7,15 @@ constexpr float insqrt2 = 1.0 / 1.4142135623730951;
 
 int clamp(int, int, int);
 
+float abs(float);
+float max(float, float);
+float min(float, float);
+
 float sin(float);
 float cos(float);
+float tan(float);
+
+float sqrt(float);
 }  // namespace Math
 
 #if USE_WASM

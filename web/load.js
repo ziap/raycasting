@@ -5,6 +5,8 @@ const canvas = document.createElement('canvas')
 const env = {
   Math_cos: Math.cos,
   Math_sin: Math.sin,
+  Math_tan: Math.tan,
+  Math_sqrt: Math.sqrt,
   Resize: (w, h) => {
     canvas.width = w
     canvas.height = h

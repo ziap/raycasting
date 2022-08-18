@@ -1,5 +1,6 @@
 #if USE_WASM
 #include "config.h"
+#include "gamestate.hpp"
 #include "input.hpp"
 #include "raycaster.hpp"
 #include "renderer.hpp"
@@ -27,7 +28,7 @@ void Input_KeyDown(const int type_id) {
 }
 
 void* BufferPointer() {
-  Resize(Config::WIDTH, Config::HEIGHT);
+  Resize(Config::Display::WIDTH, Config::Display::HEIGHT);
   return (void*)&Renderer::screen_buffer;
 }
 }
