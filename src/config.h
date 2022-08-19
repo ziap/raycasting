@@ -7,8 +7,8 @@
 namespace Config {
 
 namespace Level {
-constexpr int WIDTH = 50;
-constexpr int HEIGHT = 50;
+constexpr int WIDTH = 20;
+constexpr int HEIGHT = 20;
 }  // namespace Level
 
 namespace Display {
@@ -21,7 +21,6 @@ namespace Player {
 // The speed of the player in tile/s
 constexpr float SPEED = 2.0;
 constexpr float RADIUS = 0.2;
-constexpr float HEIGHT = 0.5;
 }  // namespace Player
 
 }  // namespace Config

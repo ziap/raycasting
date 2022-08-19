@@ -11,6 +11,7 @@ float Math::max(float x, float y) { return x > y ? x : y; }
 float Math::cos(float x) { return Math_cos(x); }
 float Math::sin(float x) { return Math_sin(x); }
 float Math::tan(float x) { return Math_tan(x); }
+float Math::atan(float x) { return Math_atan(x); }
 float Math::sqrt(float x) { return Math_sqrt(x); }
 
 #else
@@ -22,6 +23,7 @@ float Math::max(float x, float y) { return std::max(x, y); }
 float Math::cos(float x) { return std::cos(x); }
 float Math::sin(float x) { return std::sin(x); }
 float Math::tan(float x) { return std::tan(x); }
+float Math::atan(float x) { return std::tan(x); }
 float Math::sqrt(float x) { return std::sqrt(x); }
 
 #endif

@@ -6,6 +6,7 @@ const env = {
   Math_cos: Math.cos,
   Math_sin: Math.sin,
   Math_tan: Math.tan,
+  Math_atan: Math.atan,
   Math_sqrt: Math.sqrt,
   Resize: (w, h) => {
     canvas.width = w

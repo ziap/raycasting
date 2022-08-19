@@ -14,6 +14,7 @@ float min(float, float);
 float sin(float);
 float cos(float);
 float tan(float);
+float atan(float);
 
 float sqrt(float);
 }  // namespace Math

@@ -26,6 +26,8 @@ void GameState::Init() {
     level[i * Config::Level::WIDTH] = 1;
     level[Config::Level::WIDTH - 1 + i * Config::Level::WIDTH] = 1;
   }
+
+  level[3 + 3 * Config::Level::WIDTH] = 1;
 }
 
 void GameState::Update(float delta_time) {
@@ -64,13 +66,9 @@ void GameState::Update(float delta_time) {
   const auto next_tile_x = (int)next_pos_x - (next_pos_x < 0);
   const auto next_tile_y = (int)next_pos_y - (next_pos_y < 0);
 
+  // Only move the player in the direction that doesn't collide with the wall
   if (!level[next_tile_x + tile_y * Config::Level::WIDTH])
     player_x += next_diff_x;
   if (!level[tile_x + next_tile_y * Config::Level::WIDTH])
     player_y += next_diff_y;
-
-  // if (!level[next_tile_x + next_tile_y * Config::Level::WIDTH]) {
-  //   player_x += next_diff_x;
-  //   player_y += next_diff_y;
-  // }
 }

@@ -5,30 +5,39 @@
 #include "gamestate.hpp"
 #include "renderer.hpp"
 #include "texture_floor.h"
+#include "texture_wall.h"
 #include "util.hpp"
 
 #define buffer Renderer::screen_buffer
 
-#define paint_texture(pixel, texture_type, off_x, off_y)               \
-  {                                                                    \
-    const auto texture_x = int(off_x * texture_type::width);           \
-    const auto texture_y = int(off_y * texture_type::height);          \
-    buffer[pixel] =                                                    \
-      texture_type::data[texture_x + texture_y * texture_type::width]; \
-  }
+#define paint_texture(texture_type, off_x, off_y, tile_factor)                 \
+  (texture_type::data                                                          \
+     [int(off_x * texture_type::width * tile_factor) % texture_type::width +   \
+      int(off_y * texture_type::height * tile_factor) % texture_type::height * \
+        texture_type::width])
 
-constexpr float floor_height = Config::Display::HEIGHT >> 1;
+#define paint_texture_inv(texture_type, off_x, off_y, tile_factor)             \
+  (texture_type::data                                                          \
+     [texture_type::width -                                                    \
+      int(off_x * texture_type::width * tile_factor) % texture_type::width -   \
+      1 +                                                                      \
+      int(off_y * texture_type::height * tile_factor) % texture_type::height * \
+        texture_type::width])
+
+// Use bitshift to avoid clang int division warning
+constexpr float half_height = Config::Display::HEIGHT >> 1;
 constexpr float half_fov = Config::Display::FOV >> 1;
 
-constexpr auto sky1 = Color::FromHex(0xffffff);
-constexpr auto sky2 = Color::FromHex(0x7fbfff);
+// constexpr auto sky1 = Color::FromHex(0xffffff);
+constexpr auto sky1 = Color::FromHex(0x000000);
+constexpr auto sky2 = Color::FromHex(0x181425);
 
 template <int Y = 0>
 struct FloorCaster {
   static constexpr float Shade(float intensity) {
-    return (1 - intensity) + intensity * (1.0f - (float)(Y / floor_height));
+    return (1 - intensity) + intensity * (1.0f - (float)(Y / half_height));
   }
-  static constexpr auto ray_len = floor_height / (floor_height - Y);
+  static constexpr auto ray_len = half_height / (half_height - Y);
   static constexpr auto floor_offset =
     (Config::Display::HEIGHT - Y - 1) * Config::Display::WIDTH;
   static constexpr auto sky_offset = Y * Config::Display::WIDTH;
@@ -36,9 +45,9 @@ struct FloorCaster {
   static constexpr auto sky_shaded = Color::Blend(sky1, sky2, sky_shade);
 
   inline static void CastFloor(
-    int x, float sin_x, float cos_x, float cos_fix, int wall_offset
+    int x, float sin_x, float cos_x, float cos_fix, int wall_start
   ) {
-    if (floor_height - Y > wall_offset) {
+    if (half_height - Y > wall_start) {
       const auto hit_x = GameState::player_x + sin_x * ray_len * cos_fix;
       const auto hit_y = GameState::player_y + cos_x * ray_len * cos_fix;
       const auto hit_tile_x = (int)hit_x - (hit_x < 0);
@@ -46,13 +55,13 @@ struct FloorCaster {
 
       const auto hit_off_x = hit_x - hit_tile_x;
       const auto hit_off_y = hit_y - hit_tile_y;
-
-      paint_texture(x + floor_offset, TEXTURE_FLOOR, hit_off_x, hit_off_y);
-
+      buffer[x + floor_offset] =
+        paint_texture(TEXTURE_FLOOR, hit_off_x, hit_off_y, 2);
       buffer[x + sky_offset] = sky_shaded;
     }
-    if constexpr (Y < floor_height - 1) {
-      FloorCaster<Y + 1>::CastFloor(x, sin_x, cos_x, cos_fix, wall_offset);
+
+    if constexpr (Y < half_height - 1) {
+      FloorCaster<Y + 1>::CastFloor(x, sin_x, cos_x, cos_fix, wall_start);
     }
   }
 };
@@ -149,11 +158,35 @@ void Raycaster::Render() {
       const auto wall_end =
         (int)Math::min(offset + wall_height, Config::Display::HEIGHT);
 
+      const auto wall_off_x = ray_end_x - (int)ray_end_x + (ray_end_x < 0);
+      const auto wall_off_y = ray_end_y - (int)ray_end_y + (ray_end_y < 0);
+
       for (auto i = wall_start; i < wall_end; i++) {
         const auto pixel = x + i * Config::Display::WIDTH;
-        if (horizontal) buffer[pixel] = Color::FromHex(0x0a0a0a);
-        else
-          buffer[pixel] = Color::FromHex(0x0d0d0d);
+        const auto wall_off_h = (i - offset) / wall_height;
+
+        constexpr auto wall_tile = 2;
+
+        // Check which side of the wall are we on to flip the textures
+        if (horizontal) {
+          if (step_x < 0) {
+            buffer[pixel] =
+              paint_texture(TEXTURE_WALL, wall_off_y, wall_off_h, wall_tile);
+          } else {
+            buffer[pixel] = paint_texture_inv(
+              TEXTURE_WALL, wall_off_y, wall_off_h, wall_tile
+            );
+          }
+        } else {
+          if (step_y < 0) {
+            buffer[pixel] = paint_texture_inv(
+              TEXTURE_WALL, wall_off_x, wall_off_h, wall_tile
+            );
+          } else {
+            buffer[pixel] =
+              paint_texture(TEXTURE_WALL, wall_off_x, wall_off_h, wall_tile);
+          }
+        }
       }
 
       FloorCaster<0>::CastFloor(x, sin_x, cos_x, cos_fix, (int)wall_height / 2);
