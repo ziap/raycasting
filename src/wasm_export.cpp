@@ -13,22 +13,23 @@ void GameLoop(float time) {
   Raycaster::Render();
 }
 
-void Input_MouseDown() { return Input::MouseDown(); }
-void Input_MouseUp() { return Input::MouseUp(); }
-void Input_MouseMove(int x, int y) { return Input::MouseMove(x, y); }
+void MouseDown() { return Input::MouseDown(); }
+void MouseUp() { return Input::MouseUp(); }
+void MouseMove(int x, int y) { return Input::MouseMove(x, y); }
 
-void Input_KeyUp(const int type_id) {
+void KeyUp(const int type_id) {
   const auto key_type = static_cast<Input::KeyType>(type_id);
   Input::KeyUp(key_type);
 }
 
-void Input_KeyDown(const int type_id) {
+void KeyDown(const int type_id) {
   const auto key_type = static_cast<Input::KeyType>(type_id);
   Input::KeyDown(key_type);
 }
 
-void* BufferPointer() {
+void* InitAndGetPointer() {
   Resize(Config::Display::WIDTH, Config::Display::HEIGHT);
+  GameState::Init();
   return (void*)&Renderer::screen_buffer;
 }
 }

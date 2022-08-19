@@ -49,6 +49,8 @@ void Renderer::InitWindow() {
   screen_buffer = (Uint32 *)screen_surface->pixels;
 
   SDL_SetRelativeMouseMode(SDL_TRUE);
+
+  GameState::Init();
 }
 
 void Renderer::DestroyWindow() {

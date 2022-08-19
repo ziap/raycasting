@@ -10,6 +10,7 @@ const env = {
   Resize: (w, h) => {
     canvas.width = w
     canvas.height = h
+    canvas.style.height = `min(100vh, ${100 * h / w}vw)`
   }
 }
 
@@ -21,7 +22,7 @@ const { instance } = await WebAssembly.instantiateStreaming(
 // Create an image buffer from the WASM allocated memory
 const image_buffer = new Uint8ClampedArray(
   instance.exports.memory.buffer,
-  instance.exports.BufferPointer(),
+  instance.exports.InitAndGetPointer(),
   canvas.width * canvas.height * 4
 )
 const image_data = new ImageData(image_buffer, canvas.width)
@@ -39,26 +40,32 @@ const frame = () => {
 addEventListener('keydown', e => {
   canvas.requestPointerLock();
   switch (e.key) {
-    case 'w': instance.exports.Input_KeyDown(0); break;
-    case 's': instance.exports.Input_KeyDown(1); break;
-    case 'a': instance.exports.Input_KeyDown(2); break;
-    case 'd': instance.exports.Input_KeyDown(3); break;
-    default: instance.exports.Input_KeyDown(4); break;
+    case 'w': instance.exports.KeyDown(0); break;
+    case 's': instance.exports.KeyDown(1); break;
+    case 'a': instance.exports.KeyDown(2); break;
+    case 'd': instance.exports.KeyDown(3); break;
+    default: instance.exports.KeyDown(4); break;
   }
 })
 
 addEventListener('keyup', e => {
   switch (e.key) {
-    case 'w': instance.exports.Input_KeyUp(0); break;
-    case 's': instance.exports.Input_KeyUp(1); break;
-    case 'a': instance.exports.Input_KeyUp(2); break;
-    case 'd': instance.exports.Input_KeyUp(3); break;
-    default: instance.exports.Input_KeyUp(4); break;
+    case 'w': instance.exports.KeyUp(0); break;
+    case 's': instance.exports.KeyUp(1); break;
+    case 'a': instance.exports.KeyUp(2); break;
+    case 'd': instance.exports.KeyUp(3); break;
+    default: instance.exports.KeyUp(4); break;
   }
 })
 
 function handle_mouse(e) {
-  instance.exports.Input_MouseMove(e.movementX, e.movementY);
+  // Normalize pointer movement so the sensitivity stays the same even on
+  // smaller canvas
+  const scaled_height = parseFloat(getComputedStyle(canvas).height);
+  const scaled_width = parseFloat(getComputedStyle(canvas).width);
+  const normalized_x = e.movementX * canvas.width / scaled_width;
+  const normalized_y = e.movementY * canvas.height / scaled_height;
+  instance.exports.MouseMove(normalized_x, normalized_y);
 }
 
 addEventListener('pointerlockchange', () => {

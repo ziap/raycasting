@@ -7,12 +7,12 @@
 namespace Config {
 
 namespace Level {
-constexpr int WIDTH = 10;
-constexpr int HEIGHT = 10;
+constexpr int WIDTH = 50;
+constexpr int HEIGHT = 50;
 }  // namespace Level
 
 namespace Display {
-constexpr int WIDTH = 1080;
+constexpr int WIDTH = 960;
 constexpr int HEIGHT = 720;
 constexpr int FOV = 60;
 }  // namespace Display

@@ -1,6 +1,8 @@
 #pragma once
 
 namespace GameState {
+
+void Init();
 void Update(float);
 
 extern bool level[];
