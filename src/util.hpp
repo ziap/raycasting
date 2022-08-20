@@ -23,8 +23,8 @@ constexpr float cos(float x) {
   x = x - ((int)(x / pix2) + (x < 0)) * pix2 - pi;
 
   // fast sine approximation
-  const auto cv = 1.27323954 * x + 0.405284735 * x * -Math::abs(x);
-  return .225 * (cv * Math::abs(cv) - cv) + cv;
+  const auto cv = 1.27323954 * x + 0.405284735 * x * -abs(x);
+  return .225 * (cv * abs(cv) - cv) + cv;
 }
 
 constexpr float sin(float x) {
@@ -33,8 +33,8 @@ constexpr float sin(float x) {
   x = x - ((int)(x / pix2) + (x < 0)) * pix2 - pi;
 
   // Same as above
-  const auto cv = 1.27323954 * x + 0.405284735 * x * -Math::abs(x);
-  return .225 * (cv * Math::abs(cv) - cv) + cv;
+  const auto cv = 1.27323954 * x + 0.405284735 * x * -abs(x);
+  return .225 * (cv * abs(cv) - cv) + cv;
 }
 
 #else

@@ -7,9 +7,8 @@
 #include "util.hpp"
 #include "wasm_import.hpp"
 
-#define export __attribute__((visibility("default")))
+#define export extern "C" __attribute__((visibility("default")))
 
-extern "C" {
 export void GameLoop(float time) {
   GameState::Update(time / 1000);
   Raycaster::Render();
@@ -33,6 +32,5 @@ export void* InitAndGetPointer() {
   Resize(Config::Display::WIDTH, Config::Display::HEIGHT);
   GameState::Init();
   return (void*)&Renderer::screen_buffer;
-}
 }
 #endif

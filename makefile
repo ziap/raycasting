@@ -44,12 +44,12 @@ TEXTURE_OUTPUTS=$(patsubst %.png, $(INPUT_DIR)/texture_%.h, \
 VENV_NAME=.penv
 ACTIVATE_VENV=. $(VENV_NAME)/bin/activate
 
-build: clean_assets assets build/$(OUTPUT)
-debug: clean_assets assets debug/$(OUTPUT)
-web: clean_assets assets web/$(OUTPUT).wasm
+build: assets build/$(OUTPUT)
+debug: assets debug/$(OUTPUT)
+web: assets web/$(OUTPUT).wasm
 
 # Always recompile unless in debug mode
-.PHONY: build/$(OUTPUT) web/$(OUTPUT).wasm clean_assets clean
+.PHONY: build/$(OUTPUT) web/$(OUTPUT).wasm clean_assets clean 
 
 # Directly build output file with .cpp files
 build/$(OUTPUT): $(INPUTS)
@@ -73,7 +73,7 @@ $(OUTPUTS): $(OUTPUT_DIR)/%.o: $(INPUT_DIR)/%.cpp
 	@mkdir -p $(OUTPUT_DIR)
 	@$(CXX) -c $< -o $@ $(FLAGS) $(DEBUG_FLAGS) 
 
-assets: $(VENV_NAME) $(TEXTURE_OUTPUTS)
+assets: clean_assets $(VENV_NAME) $(TEXTURE_OUTPUTS)
 
 $(TEXTURE_OUTPUTS): $(INPUT_DIR)/texture_%.h: $(TEXTURE_DIR)/%.png
 	@echo Generating $(notdir $@)
