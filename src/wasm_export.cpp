@@ -7,27 +7,29 @@
 #include "util.hpp"
 #include "wasm_import.hpp"
 
+#define export __attribute__((visibility("default")))
+
 extern "C" {
-void GameLoop(float time) {
+export void GameLoop(float time) {
   GameState::Update(time / 1000);
   Raycaster::Render();
 }
 
-void MouseDown() { return Input::MouseDown(); }
-void MouseUp() { return Input::MouseUp(); }
-void MouseMove(int x, int y) { return Input::MouseMove(x, y); }
+export void MouseDown() { return Input::MouseDown(); }
+export void MouseUp() { return Input::MouseUp(); }
+export void MouseMove(int x, int y) { return Input::MouseMove(x, y); }
 
-void KeyUp(const int type_id) {
+export void KeyUp(const int type_id) {
   const auto key_type = static_cast<Input::KeyType>(type_id);
   Input::KeyUp(key_type);
 }
 
-void KeyDown(const int type_id) {
+export void KeyDown(const int type_id) {
   const auto key_type = static_cast<Input::KeyType>(type_id);
   Input::KeyDown(key_type);
 }
 
-void* InitAndGetPointer() {
+export void* InitAndGetPointer() {
   Resize(Config::Display::WIDTH, Config::Display::HEIGHT);
   GameState::Init();
   return (void*)&Renderer::screen_buffer;

@@ -25,9 +25,10 @@ CXX=clang++
 FLAGS=-std=c++20 -Wall
 LIBRARIES=$$(sdl2-config --libs)
 DEBUG_FLAGS=-g -Wextra
-BUILD_FLAGS=-O3 -march=native -mtune=native
-WASM_FLAGS=--target=wasm32 -O3 -flto -nostdlib -Wl,--no-entry, \
-	-Wl,--export-all, -Wl,-lto-O3 -DUSE_WASM=true -Wl,--allow-undefined
+BUILD_FLAGS=-Ofast -march=native -mtune=native
+WASM_FLAGS=--target=wasm32 -Ofast -flto -nostdlib -fvisibility=hidden \
+	-DUSE_WASM=true -Wl,--no-entry, -Wl,--strip-all, -Wl,-lto-O3 \
+	-Wl,--allow-undefined -Wl,--export-dynamic
 INPUT_DIR=src
 OUTPUT_DIR=obj
 TEXTURE_DIR=assets

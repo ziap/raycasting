@@ -1,13 +1,8 @@
 const canvas = document.createElement('canvas')
 
-// Pass functins to C++ 
+// Pass functions to C++ 
 // TODO: implement trig functions in C++
 const env = {
-  Math_cos: Math.cos,
-  Math_sin: Math.sin,
-  Math_tan: Math.tan,
-  Math_atan: Math.atan,
-  Math_sqrt: Math.sqrt,
   Resize: (w, h) => {
     canvas.width = w
     canvas.height = h
@@ -19,6 +14,8 @@ const { instance } = await WebAssembly.instantiateStreaming(
   fetch('./raycaster.wasm'),
   { env }
 )
+
+console.log(instance.exports)
 
 // Create an image buffer from the WASM allocated memory
 const image_buffer = new Uint8ClampedArray(
