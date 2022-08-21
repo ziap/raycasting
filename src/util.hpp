@@ -2,9 +2,9 @@
 
 namespace Math {
 constexpr float pi = 3.141592653589793;
-constexpr float pix2 = pi * 2.0;
-constexpr float pidiv2 = pi / 2.0;
-constexpr float sqrpi = pi * pi;
+constexpr float pi_x2 = pi * 2.0;
+constexpr float pi_div2 = pi / 2.0;
+constexpr float sqr_pi = pi * pi;
 constexpr float deg2rad = pi / 180.0;
 constexpr float insqrt2 = 1.0 / 1.4142135623730951;
 
@@ -15,12 +15,11 @@ constexpr float max(float x, float y) { return x > y ? x : y; }
 
 float sqrt(float x);
 
-#if USE_WASM
-
+// TODO: Use python to generate lookup tables after using integer rotation
 constexpr float cos(float x) {
   // cos(x) = sin((x + pi/2) % 2pi)
-  x += pi + pidiv2;
-  x = x - ((int)(x / pix2) + (x < 0)) * pix2 - pi;
+  x += pi + pi_div2;
+  x = x - ((int)(x / pi_x2) + (x < 0)) * pi_x2 - pi;
 
   // fast sine approximation
   const auto cv = 1.27323954 * x + 0.405284735 * x * -abs(x);
@@ -30,18 +29,17 @@ constexpr float cos(float x) {
 constexpr float sin(float x) {
   // sin(x) = sin(x % 2pi)
   x += pi;
-  x = x - ((int)(x / pix2) + (x < 0)) * pix2 - pi;
+  x = x - ((int)(x / pi_x2) + (x < 0)) * pi_x2 - pi;
 
   // Same as above
   const auto cv = 1.27323954 * x + 0.405284735 * x * -abs(x);
   return .225 * (cv * abs(cv) - cv) + cv;
 }
 
-#else
-// Use the standard library trig functions
-float sin(float);
-float cos(float);
-#endif
+constexpr float tan(float x) { return sin(x) / cos(x); }
+constexpr float cot(float x) { return cos(x) / sin(x); }
+
+float atan(float);
 }  // namespace Math
 
 #if USE_WASM

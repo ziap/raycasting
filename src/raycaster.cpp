@@ -26,18 +26,24 @@
 
 // Use bitshift to avoid clang int division warning
 constexpr float half_height = Config::Display::HEIGHT >> 1;
-constexpr float half_fov = Config::Display::FOV >> 1;
 
-// constexpr auto sky1 = Color::FromHex(0xffffff);
-constexpr auto sky1 = Color::FromHex(0x000000);
-constexpr auto sky2 = Color::FromHex(0x181425);
+constexpr auto half_fov = Config::Display::FOV / 2;
+constexpr auto half_vfov = Config::Display::VFOV / 2;
+
+// The distance to the projection plane, or a wall that is as high as the screen
+// Use trigonometry we get 0.5 / tan(fov / 2) or cot(fov / 2) * 0.5
+constexpr auto proj_dist = Math::cot(half_vfov * Math::deg2rad) * 0.5f;
+
+constexpr auto sky1 = Color::FromHex(0xffffff);
+constexpr auto sky2 = Color::FromHex(0x7fbfff);
 
 template <int Y = 0>
 struct FloorCaster {
   static constexpr float Shade(float intensity) {
     return (1 - intensity) + intensity * (1.0f - (float)(Y / half_height));
   }
-  static constexpr auto ray_len = half_height / (half_height - Y);
+
+  static constexpr auto ray_len = proj_dist * half_height / (half_height - Y);
   static constexpr auto floor_offset =
     (Config::Display::HEIGHT - Y - 1) * Config::Display::WIDTH;
   static constexpr auto sky_offset = Y * Config::Display::WIDTH;
@@ -68,9 +74,12 @@ struct FloorCaster {
 
 void Raycaster::Render() {
   for (auto x = 0; x < Config::Display::WIDTH; x++) {
-    const auto cast_dir =
-      ((float)x / Config::Display::WIDTH * Config::Display::FOV - half_fov) *
-      Math::deg2rad;
+    constexpr auto tan_hfov_x2 = Math::tan(half_fov * Math::deg2rad) * 2;
+
+    const auto tan_cast_dir =
+      ((float)x / Config::Display::WIDTH - 0.5) * tan_hfov_x2;
+
+    const auto cast_dir = Math::atan(tan_cast_dir);
     const auto angle_x = GameState::player_rot + cast_dir;
     const auto sin_x = Math::sin(angle_x);
     const auto cos_x = Math::cos(angle_x);
@@ -151,8 +160,8 @@ void Raycaster::Render() {
     const auto ray_end_y = ray_start_y + ray_dir_y * dist;
 
     if (found) {
-      const auto wall_height = (float)Config::Display::HEIGHT / dist * cos_fix;
-      const auto offset = (Config::Display::HEIGHT - wall_height) / 2;
+      const auto wall_height = half_height * proj_dist * 2 / dist * cos_fix;
+      const auto offset = (Config::Display::HEIGHT - wall_height) * 0.5f;
 
       const auto wall_start = (int)Math::max(offset, 0);
       const auto wall_end =

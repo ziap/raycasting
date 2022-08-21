@@ -1,8 +1,8 @@
 const canvas = document.createElement('canvas')
 
 // Pass functions to C++ 
-// TODO: implement trig functions in C++
 const env = {
+  Math_atan: x => Math.atan(x),
   Resize: (w, h) => {
     canvas.width = w
     canvas.height = h

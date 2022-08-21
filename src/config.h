@@ -14,7 +14,10 @@ constexpr int HEIGHT = 20;
 namespace Display {
 constexpr int WIDTH = 960;
 constexpr int HEIGHT = 720;
-constexpr int FOV = 60;
+
+// TODO: Implement constexpr atan and stop hardcoding this
+constexpr float VFOV = 73.73979529168803;
+constexpr float FOV = 90;
 }  // namespace Display
 
 namespace Player {

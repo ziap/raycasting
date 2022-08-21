@@ -33,8 +33,12 @@ void GameState::Init() {
 void GameState::Update(float delta_time) {
   if (Input::mouse_move) {
     Input::mouse_move = false;
+    // TODO: Use integer math to calculate player rotation
     player_rot +=
       (float)Input::mouse_x / Config::Display::WIDTH * 1000 * delta_time;
+    player_rot += Math::pi_x2;
+    player_rot -=
+      ((int)(player_rot / Math::pi_x2) + (player_rot < 0)) * Math::pi_x2;
   }
   const auto speed =
     Config::Player::SPEED * delta_time *

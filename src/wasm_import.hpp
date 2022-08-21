@@ -1,6 +1,7 @@
 #pragma once
 
 extern "C" {
-// util.hpp
+float Math_atan(float);
+
 void Resize(int, int);
 }
