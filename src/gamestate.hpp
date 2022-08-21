@@ -5,7 +5,7 @@ namespace GameState {
 void Init();
 void Update(float);
 
-extern bool level[];
+extern int level[];
 
 extern float player_x, player_y, player_rot;
 }  // namespace GameState

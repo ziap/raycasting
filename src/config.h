@@ -7,13 +7,13 @@
 namespace Config {
 
 namespace Level {
-constexpr int WIDTH = 20;
-constexpr int HEIGHT = 20;
+constexpr int WIDTH = 15;
+constexpr int HEIGHT = 15;
 }  // namespace Level
 
 namespace Display {
-constexpr int WIDTH = 960;
-constexpr int HEIGHT = 720;
+constexpr int WIDTH = 1280;
+constexpr int HEIGHT = 960;
 
 // TODO: Implement constexpr atan and stop hardcoding this
 constexpr float VFOV = 73.73979529168803;

@@ -62,7 +62,7 @@ struct FloorCaster {
       const auto hit_off_x = hit_x - hit_tile_x;
       const auto hit_off_y = hit_y - hit_tile_y;
       buffer[x + floor_offset] =
-        paint_texture(TEXTURE_FLOOR, hit_off_x, hit_off_y, 2);
+        paint_texture(TEXTURE_FLOOR, hit_off_x, hit_off_y, 1);
       buffer[x + sky_offset] = sky_shaded;
     }
 
@@ -174,7 +174,7 @@ void Raycaster::Render() {
         const auto pixel = x + i * Config::Display::WIDTH;
         const auto wall_off_h = (i - offset) / wall_height;
 
-        constexpr auto wall_tile = 2;
+        constexpr auto wall_tile = 1;
 
         // Check which side of the wall are we on to flip the textures
         if (horizontal) {
@@ -198,7 +198,9 @@ void Raycaster::Render() {
         }
       }
 
-      FloorCaster<0>::CastFloor(x, sin_x, cos_x, cos_fix, (int)wall_height / 2);
+      FloorCaster<0>::CastFloor(
+        x, sin_x, cos_x, cos_fix, (int)(wall_height / 2)
+      );
     } else {
       FloorCaster<0>::CastFloor(x, sin_x, cos_x, cos_fix, 0);
     }

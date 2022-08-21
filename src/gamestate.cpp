@@ -10,7 +10,7 @@ float GameState::player_x;
 float GameState::player_y;
 float GameState::player_rot;
 
-bool GameState::level[LEVEL_SIZE] = {0};
+int GameState::level[LEVEL_SIZE] = {0};
 
 void GameState::Init() {
   player_x = 1.5;
@@ -27,7 +27,7 @@ void GameState::Init() {
     level[Config::Level::WIDTH - 1 + i * Config::Level::WIDTH] = 1;
   }
 
-  level[3 + 3 * Config::Level::WIDTH] = 1;
+  level[3 + 3 * Config::Level::WIDTH] = 2;
 }
 
 void GameState::Update(float delta_time) {
@@ -59,10 +59,8 @@ void GameState::Update(float delta_time) {
   const auto next_diff_x = speed_x * sin_x + speed_y * sin_y;
   const auto next_diff_y = speed_x * cos_x + speed_y * cos_y;
 
-  const auto radius_shift_x =
-    ((next_diff_x < 0) ? -Config::Player::RADIUS : Config::Player::RADIUS);
-  const auto radius_shift_y =
-    ((next_diff_y < 0) ? -Config::Player::RADIUS : Config::Player::RADIUS);
+  const auto radius_shift_x = Math::cpsign(Config::Player::RADIUS, next_diff_x);
+  const auto radius_shift_y = Math::cpsign(Config::Player::RADIUS, next_diff_y);
 
   const auto next_pos_x = player_x + next_diff_x + radius_shift_x;
   const auto next_pos_y = player_y + next_diff_y + radius_shift_y;

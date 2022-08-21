@@ -15,6 +15,8 @@ constexpr float max(float x, float y) { return x > y ? x : y; }
 
 float sqrt(float x);
 
+float cpsign(float x, float y);
+
 // TODO: Use python to generate lookup tables after using integer rotation
 constexpr float cos(float x) {
   // cos(x) = sin((x + pi/2) % 2pi)
