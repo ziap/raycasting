@@ -22,7 +22,7 @@
 OUTPUT=raycaster
 
 CXX=clang++
-FLAGS=-std=c++20 -Wall
+FLAGS=-std=c++17 -Wall
 LIBRARIES=$$(sdl2-config --libs)
 DEBUG_FLAGS=-g -Wextra
 BUILD_FLAGS=-Ofast -march=native -mtune=native

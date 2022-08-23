@@ -1,41 +1,76 @@
 # Raycasting engine
 
-Old-school raycasting pseudo-3D game engine made with C++. My first ambitious project.
+Old-school raycasting pseudo-3D game engine made with C++. Just a project to
+help me get better at trigonometry math and low level coding.
+
+## Features
+
+- Perspectively correct raycasting engine.
+- Collision detection.
+- Textured floor and wall.
+- High resolution and performance.
+- Optimized for fast and small WebAssembly.
+
+## Performance (FPS)
+
+| Resolution | Native | Web |
+| ---------- | ------ | --- |
+| 1080p      | 110    | 50  |
+| 720p       | 280    | 95  |
 
 ## Requirements
 
-- A C++ compiler that supports C++20.
+- A C++ compiler that supports C++17.
 - GNU make.
-- [SDL2](https://www.libsdl.org/download-2.0.php).
+- Python 3. (with virtual environment)
+- For native backend: [SDL2](https://www.libsdl.org/download-2.0.php).
+- For WASM backend: Clang, LLVM and LLD (the only C++ compiler toolchain that
+  supports WASM other than Emscripten that I know of)
 
 The default compiler is `clang++` so you need to edit the [makefile](makefile)
 if you want to use another compiler.
 
-## Build and run
+Check if the requirements are properly installed 
 
-To compile go to the project directory and run `make build`.
+```bash
+clang++ --version
+make --version
+python --version
+sdl2-config --version
+wasm-ld --version
+```
 
-Run the copiled binary `build/main`.
+Building on Windows should work in theory but I can't test that.
 
-## Feature goals
+## Building
 
- - High resolution raycasting engine.
- - Texture mapping.
- - Load textures and audios during build step.
- - Entites and projectiles.
- - Vertical camera rotation.
+Run `make build` for the native version and `make web` for the wasm module.
 
-## Implementation goals
+It should automatically create the virtual environment and install pip
+dependencies during the first compilation. Subsequent builds are faster and
+since they don't need to do all that again.
 
- - Render everything into an image buffer and display it every frame. No 3D
-   renderer or shader.
- - Native, cross-platform, portable.
- - Decouple SDL2 code and other C++ codes so I can easily port it to WASM
-   later.
- - Playable framerates (60fps) on low-end hardware including iGPU.
- - WASM support without using SDL2 and Emscripten. (Use canvas image data for
-   rendering and DOM events for user input).
+Run the copiled binary `build/raycaster` to use the native version or host the
+website with
+
+```
+python -m http.server 8080 -d web
+```
+
+And go to `localhost:8080` in your browser to use the web version.
+
+## Todo
+
+- Use integer to store rotation (`[0..2^32 - 1]` instead of `[0..2π)`)
+- Use lookup tables to calculate trigonometry and their inverse.
+- Multi-threading: `std::async` on native version and multiple web workers on
+  WebAssembly version.
+- Basic shading.
+- Sprites with depth buffer.
+- Y-shearing. (for looking up and down or changing pitch)
+- Use a more cache efficient way to manipulate the screen buffer.
+- Build a game.
 
 ## License
 
-This template is licensed under the [AGPL-v3 License](LICENSE).
+This project is licensed under the [AGPL-v3 License](LICENSE).
