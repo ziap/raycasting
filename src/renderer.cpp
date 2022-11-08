@@ -28,6 +28,7 @@ void Renderer::InitWindow() {
     "Raycast engine", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
     Config::Display::WIDTH, Config::Display::HEIGHT, SDL_WINDOW_SHOWN
   );
+
   auto pf = SDL_GetWindowPixelFormat(window);
   auto pf_name = SDL_GetPixelFormatName(pf);
   INFO("Pixel format: %s\n", pf_name);
@@ -48,6 +49,7 @@ void Renderer::InitWindow() {
 
   screen_buffer = (Uint32 *)screen_surface->pixels;
 
+  SDL_SetWindowResizable(window, SDL_FALSE);
   SDL_SetRelativeMouseMode(SDL_TRUE);
 
   GameState::Init();
@@ -61,11 +63,6 @@ void Renderer::DestroyWindow() {
 
 static Input::KeyType GetKeyType(SDL_Keycode key) {
   switch (key) {
-      // case SDLK_UP: return Input::KEY_UP;
-      // case SDLK_DOWN: return Input::KEY_DOWN;
-      // case SDLK_LEFT: return Input::KEY_LEFT;
-      // case SDLK_RIGHT: return Input::KEY_RIGHT;
-
     case SDLK_w: return Input::KEY_UP;
     case SDLK_s: return Input::KEY_DOWN;
     case SDLK_a: return Input::KEY_LEFT;
@@ -127,6 +124,14 @@ void Renderer::GameLoop() {
     }
   }
 }
+
+int main() {
+  Renderer::InitWindow();
+  Renderer::GameLoop();
+  Renderer::DestroyWindow();
+  return 0;
+}
+
 #else
 
 #define SCREEN_BUFFER_SIZE (Config::Display::WIDTH * Config::Display::HEIGHT)
