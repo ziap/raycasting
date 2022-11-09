@@ -152,7 +152,7 @@ void Raycaster::Render() {
         // Or when it hit a wall
         if (found) break;
       } else {
-        break;
+        if (dist > Config::Display::RENDER_DISTANCE) break;
       }
     }
 

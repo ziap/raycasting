@@ -69,8 +69,14 @@ void GameState::Update(float delta_time) {
   const auto next_tile_y = (int)next_pos_y - (next_pos_y < 0);
 
   // Only move the player in the direction that doesn't collide with the wall
-  if (!level[next_tile_x + tile_y * Config::Level::WIDTH])
+  if (next_tile_x >= 0 && next_tile_x < Config::Level::WIDTH && next_tile_y >= 0 && next_tile_y < Config::Level::HEIGHT) {
+    if (!level[next_tile_x + tile_y * Config::Level::WIDTH])
+      player_x += next_diff_x;
+    if (!level[tile_x + next_tile_y * Config::Level::WIDTH])
+      player_y += next_diff_y;
+  } else {
+    // Player is outside of map and can move freely
     player_x += next_diff_x;
-  if (!level[tile_x + next_tile_y * Config::Level::WIDTH])
     player_y += next_diff_y;
+  }
 }

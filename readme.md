@@ -66,7 +66,7 @@ And go to `localhost:8080` in your browser to use the web version.
 - Multi-threading: `std::async` on native version and multiple web workers on
   WebAssembly version.
 - Basic shading.
-- Sprites with depth buffer.
+- Sprites with 1D depth buffer.
 - Y-shearing. (for looking up and down or changing pitch)
 - Use a more cache efficient way to manipulate the screen buffer.
 - Build a game.
