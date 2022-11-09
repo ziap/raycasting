@@ -61,7 +61,8 @@ And go to `localhost:8080` in your browser to use the web version.
 
 ## Todo
 
-- Use integer to store rotation (`[0..2^32 - 1]` instead of `[0..2π)`)
+- Tilemap system for easier wall texturing.
+- Use integer to store rotation (`[0..2^32 - 1]` instead of `[0..2π)`).
 - Use lookup tables to calculate trigonometry and their inverse.
 - Multi-threading: `std::async` on native version and multiple web workers on
   WebAssembly version.
