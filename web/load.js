@@ -15,15 +15,12 @@ const { instance } = await WebAssembly.instantiateStreaming(
   { env }
 )
 
-console.log(instance.exports)
-
 // Create an image buffer from the WASM allocated memory
-const image_buffer = new Uint8ClampedArray(
+const image_data = new ImageData(new Uint8ClampedArray(
   instance.exports.memory.buffer,
   instance.exports.InitAndGetPointer(),
   canvas.width * canvas.height * 4
-)
-const image_data = new ImageData(image_buffer, canvas.width)
+), canvas.width)
 
 let prev_time = performance.now();
 const frame = () => {
@@ -36,7 +33,6 @@ const frame = () => {
 }
 
 addEventListener('keydown', e => {
-  canvas.requestPointerLock();
   switch (e.key) {
     case 'w': instance.exports.KeyDown(0); break;
     case 's': instance.exports.KeyDown(1); break;
@@ -56,23 +52,19 @@ addEventListener('keyup', e => {
   }
 })
 
-function handle_mouse(e) {
-  // Normalize pointer movement so the sensitivity stays the same even on
-  // smaller canvas
-  const scaled_height = parseFloat(getComputedStyle(canvas).height);
-  const scaled_width = parseFloat(getComputedStyle(canvas).width);
-  const normalized_x = e.movementX * canvas.width / scaled_width;
-  const normalized_y = e.movementY * canvas.height / scaled_height;
-  instance.exports.MouseMove(normalized_x, normalized_y);
-}
-
-addEventListener('pointerlockchange', () => {
+document.addEventListener('mousemove', e => {
   if (document.pointerLockElement == canvas) {
-    document.addEventListener('mousemove', handle_mouse)
+    // Normalize pointer movement so the sensitivity stays the same even on
+    // smaller canvas
+    const scaled_height = parseFloat(getComputedStyle(canvas).height);
+    const scaled_width = parseFloat(getComputedStyle(canvas).width);
+    const normalized_x = e.movementX * canvas.width / scaled_width;
+    const normalized_y = e.movementY * canvas.height / scaled_height;
+    instance.exports.MouseMove(normalized_x, normalized_y);
   } else {
-    document.removeEventListener('mousemove', handle_mouse)
+    canvas.requestPointerLock();
   }
-});
+})
 
 // Start the game
 document.body.appendChild(canvas)

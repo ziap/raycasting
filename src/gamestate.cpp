@@ -17,17 +17,7 @@ void GameState::Init() {
   player_y = 1.5;
   player_rot = 0;
 
-  for (int i = 0; i < Config::Level::WIDTH; i++) {
-    level[i] = 1;
-    level[i + (Config::Level::HEIGHT - 1) * Config::Level::WIDTH] = 1;
-  }
-
-  for (int i = 0; i < Config::Level::HEIGHT; i++) {
-    level[i * Config::Level::WIDTH] = 1;
-    level[Config::Level::WIDTH - 1 + i * Config::Level::WIDTH] = 1;
-  }
-
-  level[3 + 3 * Config::Level::WIDTH] = 2;
+  for (auto i = 0; i < LEVEL_SIZE; i++) level[i] = Config::Level::TEST_MAP[i];
 }
 
 void GameState::Update(float delta_time) {

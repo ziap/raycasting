@@ -7,16 +7,30 @@
 namespace Config {
 
 namespace Level {
-constexpr int WIDTH = 15;
-constexpr int HEIGHT = 15;
+constexpr int WIDTH = 10;
+constexpr int HEIGHT = 10;
+
+constexpr int TEST_MAP[WIDTH * HEIGHT] = {
+  1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  //
+  1, 0, 0, 0, 1, 1, 0, 0, 0, 1,  //
+  1, 0, 0, 0, 1, 0, 0, 1, 0, 1,  //
+  1, 1, 0, 0, 1, 1, 1, 1, 0, 1,  //
+  1, 1, 0, 0, 0, 0, 0, 0, 0, 1,  //
+  1, 1, 0, 1, 0, 0, 1, 0, 0, 1,  //
+  1, 0, 0, 0, 0, 0, 0, 1, 0, 1,  //
+  1, 0, 0, 0, 0, 1, 0, 0, 0, 1,  //
+  1, 0, 0, 0, 0, 1, 0, 0, 1, 1,  //
+  1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  //
+};
 }  // namespace Level
 
 namespace Display {
-constexpr int WIDTH = 1280;
-constexpr int HEIGHT = 960;
+constexpr int WIDTH = 800;
+constexpr int HEIGHT = 600;
 
 // TODO: Implement constexpr atan and stop hardcoding this
-constexpr float VFOV = 73.73979529168803;
+// vfov = 360 * atan(tan(hfov * pi / 360) * height / width) / pi
+constexpr float VFOV = 73.73979529168804;
 constexpr float FOV = 90;
 constexpr float RENDER_DISTANCE = 200;
 }  // namespace Display

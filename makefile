@@ -26,9 +26,9 @@ FLAGS=-std=c++17 -Wall
 LIBRARIES=$$(sdl2-config --libs)
 DEBUG_FLAGS=-g -Wextra
 BUILD_FLAGS=-Ofast -march=native -mtune=native
-WASM_FLAGS=--target=wasm32 -Ofast -flto -nostdlib -fvisibility=hidden \
-	-DUSE_WASM=true -Wl,--no-entry, -Wl,--strip-all, -Wl,-lto-O3 \
-	-Wl,--allow-undefined -Wl,--export-dynamic
+WASM_FLAGS=--target=wasm32 -Ofast -flto -fno-builtin -nostdlib \
+	-fvisibility=hidden -DUSE_WASM=true -Wl,--no-entry, -Wl,--strip-all, \
+	-Wl,-lto-O3 -Wl,--allow-undefined -Wl,--export-dynamic
 INPUT_DIR=src
 OUTPUT_DIR=obj
 TEXTURE_DIR=assets

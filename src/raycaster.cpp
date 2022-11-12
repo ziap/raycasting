@@ -24,6 +24,12 @@
       int(off_y * texture_type::height * tile_factor) % texture_type::height * \
         texture_type::width])
 
+#define DIFFUSE_STRENGTH 0.5
+#define shade(pixel, diffuse)                                         \
+  (Color::Blend(                                                      \
+    black, pixel, (1 - DIFFUSE_STRENGTH) + diffuse * DIFFUSE_STRENGTH \
+  ))
+
 // Use bitshift to avoid clang int division warning
 constexpr float half_height = Config::Display::HEIGHT >> 1;
 
@@ -37,6 +43,8 @@ constexpr auto proj_dist = Math::cot(half_vfov * Math::deg2rad) * 0.5f;
 constexpr auto sky1 = Color::FromHex(0xffffff);
 constexpr auto sky2 = Color::FromHex(0x7fbfff);
 
+constexpr auto black = Color::FromHex(0x000000);
+
 template <int Y = 0>
 struct FloorCaster {
   static constexpr float Shade(float intensity) {
@@ -49,6 +57,7 @@ struct FloorCaster {
   static constexpr auto sky_offset = Y * Config::Display::WIDTH;
   static constexpr auto sky_shade = Shade(0.5);
   static constexpr auto sky_shaded = Color::Blend(sky1, sky2, sky_shade);
+  static constexpr auto diffuse = 0.5 / (ray_len * ray_len + 0.25);
 
   inline static void CastFloor(
     int x, float sin_x, float cos_x, float cos_fix, int wall_start
@@ -61,8 +70,11 @@ struct FloorCaster {
 
       const auto hit_off_x = hit_x - hit_tile_x;
       const auto hit_off_y = hit_y - hit_tile_y;
-      buffer[x + floor_offset] =
-        paint_texture(TEXTURE_FLOOR, hit_off_x, hit_off_y, 1);
+
+      buffer[x + floor_offset] = shade(
+        paint_texture(TEXTURE_FLOOR, hit_off_x, hit_off_y, 1),
+        Math::sqrt(diffuse)
+      );
       buffer[x + sky_offset] = sky_shaded;
     }
 
@@ -186,6 +198,7 @@ void Raycaster::Render() {
               TEXTURE_WALL, wall_off_y, wall_off_h, wall_tile
             );
           }
+          buffer[pixel] = shade(buffer[pixel], Math::abs(sin_x));
         } else {
           if (step_y < 0) {
             buffer[pixel] = paint_texture_inv(
@@ -195,6 +208,7 @@ void Raycaster::Render() {
             buffer[pixel] =
               paint_texture(TEXTURE_WALL, wall_off_x, wall_off_h, wall_tile);
           }
+          buffer[pixel] = shade(buffer[pixel], Math::abs(cos_x));
         }
       }
 
