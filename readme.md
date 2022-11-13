@@ -1,9 +1,9 @@
 # Raycasting engine
 
 Old-school raycasting pseudo-3D game engine made with C++. Just a project to
-help me get better at trigonometry math and low level coding.
+help me get better at trigonometry math and low level coding. [Online Demo](https://ziap.github.io/raycasting/web).
 
-![](screenshot.png)
+![](logo.png)
 
 ## Features
 
