@@ -48,7 +48,7 @@ static void CastFloor(
 ) {
   for (int y = -Math::abs(cam_off); y < half_height - wall_off; y++) {
     const auto ray_len = proj_dist * half_height / (half_height - y);
-    const auto diffuse = Math::sqrt(0.5 / (ray_len * ray_len + 0.25));
+    const auto diffuse = 0.5 / Math::sqrt(ray_len * ray_len + 0.25);
 
     const auto hit_x = GameState::player_x + sin_x * ray_len * cos_fix;
     const auto hit_y = GameState::player_y + cos_x * ray_len * cos_fix;
