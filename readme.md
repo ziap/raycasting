@@ -11,7 +11,7 @@ help me get better at trigonometry math and low level coding.
 - [x] Collision detection.
 - [x] Textured floor and wall.
 - [x] Diffuse shading.
-- [x] Y Y-shearing. (vertical camera movement)
+- [x] Y-shearing. (vertical camera movement)
 - [ ] High resolution and performance.
 - [ ] Optimized for fast and small WebAssembly.
 

@@ -1,8 +1,7 @@
-# Compiled binaries including WASM
+# Compiled binaries excluding WASM
 obj/
 debug/
 build/
-web/raycaster.wasm
 
 # Python scripting environment
 .penv/
