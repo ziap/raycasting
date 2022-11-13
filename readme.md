@@ -3,20 +3,21 @@
 Old-school raycasting pseudo-3D game engine made with C++. Just a project to
 help me get better at trigonometry math and low level coding.
 
+![](screenshot.png)
+
 ## Features
 
-- Perspectively correct raycasting engine.
-- Collision detection.
-- Textured floor and wall.
-- High resolution and performance.
-- Optimized for fast and small WebAssembly.
+- [x] Perspectively correct raycasting engine.
+- [x] Collision detection.
+- [x] Textured floor and wall.
+- [x] Diffuse shading.
+- [x] Y Y-shearing. (vertical camera movement)
+- [ ] High resolution and performance.
+- [ ] Optimized for fast and small WebAssembly.
 
 ## Performance (FPS)
 
-| Resolution | Native | Web |
-| ---------- | ------ | --- |
-| 1080p      | 110    | 50  |
-| 720p       | 280    | 95  |
+With many added features the engine's performance is currently very poor, especially the WASM version. I'll do some profiling and optimization before continuing adding more stuffs.
 
 ## Requirements
 
@@ -66,9 +67,7 @@ And go to `localhost:8080` in your browser to use the web version.
 - Use lookup tables to calculate trigonometry and their inverse.
 - Multi-threading: `std::async` on native version and multiple web workers on
   WebAssembly version.
-- Basic shading.
 - Sprites with 1D depth buffer.
-- Y-shearing. (for looking up and down or changing pitch)
 - Use a more cache efficient way to manipulate the screen buffer.
 - Build a game.
 

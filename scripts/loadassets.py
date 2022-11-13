@@ -13,7 +13,7 @@ img = cv2.imread(in_file).astype(np.uint32)
 # Remove alpha channel
 img = img[:,:,:3]
 
-width, height = img.shape[:2]
+height, width = img.shape[:2]
 
 # Flatten image
 img.resize(img.shape[0] * img.shape[1], img.shape[2])

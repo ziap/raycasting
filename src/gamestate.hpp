@@ -7,5 +7,5 @@ void Update(float);
 
 extern int level[];
 
-extern float player_x, player_y, player_rot;
+extern float player_x, player_y, player_rot, player_pitch;
 }  // namespace GameState

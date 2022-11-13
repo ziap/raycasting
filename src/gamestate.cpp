@@ -9,6 +9,7 @@
 float GameState::player_x;
 float GameState::player_y;
 float GameState::player_rot;
+float GameState::player_pitch;
 
 int GameState::level[LEVEL_SIZE] = {0};
 
@@ -26,6 +27,10 @@ void GameState::Update(float delta_time) {
     // TODO: Use integer math to calculate player rotation
     player_rot +=
       (float)Input::mouse_x / Config::Display::WIDTH * 1000 * delta_time;
+    player_pitch +=
+      (float)Input::mouse_y / Config::Display::WIDTH * 1000 * delta_time;
+    player_pitch = Math::max(player_pitch, -Math::pi / 8);
+    player_pitch = Math::min(player_pitch, Math::pi / 8);
     player_rot += Math::pi_x2;
     player_rot -=
       ((int)(player_rot / Math::pi_x2) + (player_rot < 0)) * Math::pi_x2;

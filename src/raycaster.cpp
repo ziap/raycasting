@@ -4,6 +4,7 @@
 #include "config.h"
 #include "gamestate.hpp"
 #include "renderer.hpp"
+#include "texture_ceiling.h"
 #include "texture_floor.h"
 #include "texture_wall.h"
 #include "util.hpp"
@@ -25,7 +26,7 @@
         texture_type::width])
 
 #define DIFFUSE_STRENGTH 0.5
-#define shade(pixel, diffuse)                                         \
+#define diffuse_shading(pixel, diffuse)                               \
   (Color::Blend(                                                      \
     black, pixel, (1 - DIFFUSE_STRENGTH) + diffuse * DIFFUSE_STRENGTH \
   ))
@@ -40,49 +41,41 @@ constexpr auto half_vfov = Config::Display::VFOV / 2;
 // Use trigonometry we get 0.5 / tan(fov / 2) or cot(fov / 2) * 0.5
 constexpr auto proj_dist = Math::cot(half_vfov * Math::deg2rad) * 0.5f;
 
-constexpr auto sky1 = Color::FromHex(0xffffff);
-constexpr auto sky2 = Color::FromHex(0x7fbfff);
-
 constexpr auto black = Color::FromHex(0x000000);
 
-template <int Y = 0>
-struct FloorCaster {
-  static constexpr float Shade(float intensity) {
-    return (1 - intensity) + intensity * (1.0f - (float)(Y / half_height));
-  }
+static void CastFloor(
+  int x, int cam_off, float sin_x, float cos_x, float cos_fix, int wall_off
+) {
+  for (int y = -Math::abs(cam_off); y < half_height - wall_off; y++) {
+    const auto ray_len = proj_dist * half_height / (half_height - y);
+    const auto diffuse = Math::sqrt(0.5 / (ray_len * ray_len + 0.25));
 
-  static constexpr auto ray_len = proj_dist * half_height / (half_height - Y);
-  static constexpr auto floor_offset =
-    (Config::Display::HEIGHT - Y - 1) * Config::Display::WIDTH;
-  static constexpr auto sky_offset = Y * Config::Display::WIDTH;
-  static constexpr auto sky_shade = Shade(0.5);
-  static constexpr auto sky_shaded = Color::Blend(sky1, sky2, sky_shade);
-  static constexpr auto diffuse = 0.5 / (ray_len * ray_len + 0.25);
+    const auto hit_x = GameState::player_x + sin_x * ray_len * cos_fix;
+    const auto hit_y = GameState::player_y + cos_x * ray_len * cos_fix;
+    const auto hit_tile_x = (int)hit_x - (hit_x < 0);
+    const auto hit_tile_y = (int)hit_y - (hit_y < 0);
 
-  inline static void CastFloor(
-    int x, float sin_x, float cos_x, float cos_fix, int wall_start
-  ) {
-    if (half_height - Y > wall_start) {
-      const auto hit_x = GameState::player_x + sin_x * ray_len * cos_fix;
-      const auto hit_y = GameState::player_y + cos_x * ray_len * cos_fix;
-      const auto hit_tile_x = (int)hit_x - (hit_x < 0);
-      const auto hit_tile_y = (int)hit_y - (hit_y < 0);
+    const auto hit_off_x = hit_x - hit_tile_x;
+    const auto hit_off_y = hit_y - hit_tile_y;
 
-      const auto hit_off_x = hit_x - hit_tile_x;
-      const auto hit_off_y = hit_y - hit_tile_y;
+    const auto floor_y = Config::Display::HEIGHT - 1 - cam_off - y;
+    const auto ceiling_y = y - cam_off;
 
-      buffer[x + floor_offset] = shade(
-        paint_texture(TEXTURE_FLOOR, hit_off_x, hit_off_y, 1),
-        Math::sqrt(diffuse)
+    if (floor_y < Config::Display::HEIGHT) {
+      const auto floor_offset = floor_y * Config::Display::WIDTH;
+      buffer[x + floor_offset] = diffuse_shading(
+        paint_texture(TEXTURE_FLOOR, hit_off_x, hit_off_y, 1), diffuse
       );
-      buffer[x + sky_offset] = sky_shaded;
     }
 
-    if constexpr (Y < half_height - 1) {
-      FloorCaster<Y + 1>::CastFloor(x, sin_x, cos_x, cos_fix, wall_start);
+    if (ceiling_y > 0) {
+      const auto ceiling_offset = ceiling_y * Config::Display::WIDTH;
+      buffer[x + ceiling_offset] = diffuse_shading(
+        paint_texture(TEXTURE_CEILING, hit_off_x, hit_off_y, 1), diffuse
+      );
     }
   }
-};
+}
 
 void Raycaster::Render() {
   for (auto x = 0; x < Config::Display::WIDTH; x++) {
@@ -96,6 +89,8 @@ void Raycaster::Render() {
     const auto sin_x = Math::sin(angle_x);
     const auto cos_x = Math::cos(angle_x);
     const auto cos_fix = 1 / Math::cos(cast_dir);
+    const auto cam_off =
+      GameState::player_pitch / Math::pi * 180 / half_fov * half_height;
 
     // Raycasting using the DDA line generation algorithm
     const auto ray_start_x = GameState::player_x;
@@ -173,7 +168,8 @@ void Raycaster::Render() {
 
     if (found) {
       const auto wall_height = half_height * proj_dist * 2 / dist * cos_fix;
-      const auto offset = (Config::Display::HEIGHT - wall_height) * 0.5f;
+      const auto offset =
+        (Config::Display::HEIGHT - wall_height) * 0.5f - cam_off;
 
       const auto wall_start = (int)Math::max(offset, 0);
       const auto wall_end =
@@ -190,33 +186,33 @@ void Raycaster::Render() {
 
         // Check which side of the wall are we on to flip the textures
         if (horizontal) {
+          Color::color_t wall_color;
           if (step_x < 0) {
-            buffer[pixel] =
+            wall_color =
               paint_texture(TEXTURE_WALL, wall_off_y, wall_off_h, wall_tile);
           } else {
-            buffer[pixel] = paint_texture_inv(
+            wall_color = paint_texture_inv(
               TEXTURE_WALL, wall_off_y, wall_off_h, wall_tile
             );
           }
-          buffer[pixel] = shade(buffer[pixel], Math::abs(sin_x));
+          buffer[pixel] = diffuse_shading(wall_color, Math::abs(sin_x));
         } else {
+          Color::color_t wall_color;
           if (step_y < 0) {
-            buffer[pixel] = paint_texture_inv(
+            wall_color = paint_texture_inv(
               TEXTURE_WALL, wall_off_x, wall_off_h, wall_tile
             );
           } else {
-            buffer[pixel] =
+            wall_color =
               paint_texture(TEXTURE_WALL, wall_off_x, wall_off_h, wall_tile);
           }
-          buffer[pixel] = shade(buffer[pixel], Math::abs(cos_x));
+          buffer[pixel] = diffuse_shading(wall_color, Math::abs(cos_x));
         }
       }
 
-      FloorCaster<0>::CastFloor(
-        x, sin_x, cos_x, cos_fix, (int)(wall_height / 2)
-      );
+      CastFloor(x, cam_off, sin_x, cos_x, cos_fix, wall_height / 2);
     } else {
-      FloorCaster<0>::CastFloor(x, sin_x, cos_x, cos_fix, 0);
+      CastFloor(x, cam_off, sin_x, cos_x, cos_fix, 0);
     }
   }
 }
