@@ -61,9 +61,9 @@ static void CastFloor(
     const auto ceiling_y = y - cam_off;
 
     if (floor_y < Config::Display::HEIGHT) {
-      const auto ray_len =
+      const auto light_len =
         proj_dist * half_height / (half_height - y + cam_off);
-      const auto diffuse = 0.5 / Math::sqrt(ray_len * ray_len + 0.25);
+      const auto diffuse = 0.5 / Math::sqrt(light_len * light_len + 0.25);
 
       const auto floor_offset = floor_y * Config::Display::WIDTH;
       buffer[x + floor_offset] = diffuse_shading(
@@ -71,10 +71,10 @@ static void CastFloor(
       );
     }
 
-    if (ceiling_y > 0) {
-      const auto ray_len =
+    if (ceiling_y >= 0) {
+      const auto light_len =
         proj_dist * half_height / (half_height - y - cam_off);
-      const auto diffuse = 0.5 / Math::sqrt(ray_len * ray_len + 0.25);
+      const auto diffuse = 0.5 / Math::sqrt(light_len * light_len + 0.25);
 
       const auto ceiling_offset = ceiling_y * Config::Display::WIDTH;
       buffer[x + ceiling_offset] = diffuse_shading(
