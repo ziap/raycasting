@@ -54,7 +54,7 @@ It should automatically create the virtual environment and install pip
 dependencies during the first compilation. Subsequent builds are faster and
 since they don't need to do all that again.
 
-Run the copiled binary `build/raycaster` to use the native version or host the
+Run the compiled binary `build/raycaster` to use the native version or host the
 website with
 
 ```
@@ -68,6 +68,7 @@ And go to `localhost:8080` in your browser to use the web version.
 - Tilemap system for easier wall texturing.
 - Use integer to store rotation (`[0..2^32 - 1]` instead of `[0..2π)`).
 - Use lookup tables to calculate trigonometry and their inverse.
+- Multiple light source.
 - Multi-threading: `std::async` on native version and multiple web workers on
   WebAssembly version.
 - Sprites with 1D depth buffer.
