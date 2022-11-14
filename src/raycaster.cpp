@@ -48,7 +48,6 @@ static void CastFloor(
 ) {
   for (int y = -Math::abs(cam_off); y < half_height - wall_off; y++) {
     const auto ray_len = proj_dist * half_height / (half_height - y);
-    const auto diffuse = 0.5 / Math::sqrt(ray_len * ray_len + 0.25);
 
     const auto hit_x = GameState::player_x + sin_x * ray_len * cos_fix;
     const auto hit_y = GameState::player_y + cos_x * ray_len * cos_fix;
@@ -62,6 +61,10 @@ static void CastFloor(
     const auto ceiling_y = y - cam_off;
 
     if (floor_y < Config::Display::HEIGHT) {
+      const auto ray_len =
+        proj_dist * half_height / (half_height - y + cam_off);
+      const auto diffuse = 0.5 / Math::sqrt(ray_len * ray_len + 0.25);
+
       const auto floor_offset = floor_y * Config::Display::WIDTH;
       buffer[x + floor_offset] = diffuse_shading(
         paint_texture(TEXTURE_FLOOR, hit_off_x, hit_off_y, 1), diffuse
@@ -69,6 +72,10 @@ static void CastFloor(
     }
 
     if (ceiling_y > 0) {
+      const auto ray_len =
+        proj_dist * half_height / (half_height - y - cam_off);
+      const auto diffuse = 0.5 / Math::sqrt(ray_len * ray_len + 0.25);
+
       const auto ceiling_offset = ceiling_y * Config::Display::WIDTH;
       buffer[x + ceiling_offset] = diffuse_shading(
         paint_texture(TEXTURE_CEILING, hit_off_x, hit_off_y, 1), diffuse
