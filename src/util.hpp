@@ -3,8 +3,6 @@
 namespace Math {
 constexpr float pi = 3.141592653589793;
 constexpr float pi_x2 = pi * 2.0;
-constexpr float pi_div2 = pi / 2.0;
-constexpr float sqr_pi = pi * pi;
 constexpr float deg2rad = pi / 180.0;
 constexpr float insqrt2 = 1.0 / 1.4142135623730951;
 
@@ -18,30 +16,35 @@ float sqrt(float x);
 float cpsign(float x, float y);
 
 // TODO: Use python to generate lookup tables after using integer rotation
-constexpr float cos(float x) {
-  // cos(x) = sin((x + pi/2) % 2pi)
-  x += pi + pi_div2;
-  x = x - ((int)(x / pi_x2) + (x < 0)) * pi_x2 - pi;
-
-  // fast sine approximation
-  const auto cv = 1.27323954 * x + 0.405284735 * x * -abs(x);
-  return .225 * (cv * abs(cv) - cv) + cv;
-}
-
 constexpr float sin(float x) {
   // sin(x) = sin(x % 2pi)
   x += pi;
   x = x - ((int)(x / pi_x2) + (x < 0)) * pi_x2 - pi;
 
-  // Same as above
-  const auto cv = 1.27323954 * x + 0.405284735 * x * -abs(x);
-  return .225 * (cv * abs(cv) - cv) + cv;
+  // fast sine approximation
+  constexpr auto u = 4 / pi;
+  constexpr auto v = 4 / pi / pi;
+  const auto cv = u * x - v * x * abs(x);
+  return 0.225 * (cv * abs(cv) - cv) + cv;
+}
+
+constexpr float cos(float x) {
+  // cos(x) = sin((x + pi/2))
+  constexpr auto half_pi = pi * 0.5;
+  return sin(x + half_pi);
 }
 
 constexpr float tan(float x) { return sin(x) / cos(x); }
 constexpr float cot(float x) { return cos(x) / sin(x); }
 
-float atan(float);
+constexpr float atan(float x) {
+  constexpr auto a = 0.0776509570923569;
+  constexpr auto b = -0.287434475393028;
+  constexpr auto c = pi * 0.25 - a - b;
+
+  const auto xx = x * x;
+  return ((a * xx + b) * xx + c) * x;
+}
 }  // namespace Math
 
 #if USE_WASM

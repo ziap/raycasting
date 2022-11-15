@@ -2,7 +2,6 @@ const canvas = document.createElement('canvas')
 
 // Pass functions to C++ 
 const env = {
-  atanf: x => Math.atan(x),
   Resize: (w, h) => {
     canvas.width = w
     canvas.height = h

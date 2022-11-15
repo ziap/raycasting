@@ -4,6 +4,8 @@
 #define USE_WASM false
 #endif
 
+#include "util.hpp"
+
 namespace Config {
 
 namespace Level {
@@ -30,8 +32,10 @@ constexpr int HEIGHT = 600;
 
 // TODO: Implement constexpr atan and stop hardcoding this
 // vfov = 360 * atan(tan(hfov * pi / 360) * height / width) / pi
-constexpr float VFOV = 73.73979529168804;
 constexpr float FOV = 90;
+constexpr float VFOV =
+  360 * Math::atan(Math::tan(FOV * Math::pi / 360.0) * HEIGHT / WIDTH) /
+  Math::pi;
 constexpr float RENDER_DISTANCE = 200;
 }  // namespace Display
 
