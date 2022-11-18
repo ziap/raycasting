@@ -11,18 +11,18 @@ constexpr color_t FromHex(unsigned hex) {
 };
 
 extern constexpr color_t Blend(color_t c1, color_t c2, float f) {
-  auto r1 = (int)((c1 & 0x0000ff) >> 0);
-  auto r2 = (int)((c2 & 0x0000ff) >> 0);
-  auto g1 = (int)((c1 & 0x00ff00) >> 8);
-  auto g2 = (int)((c2 & 0x00ff00) >> 8);
-  auto b1 = (int)((c1 & 0xff0000) >> 16);
-  auto b2 = (int)((c2 & 0xff0000) >> 16);
-  r1 += (float)(r2 - r1) * f;
-  g1 += (float)(g2 - g1) * f;
-  b1 += (float)(b2 - b1) * f;
+  const auto r1 = ((c1 & 0x0000ff) >> 0);
+  const auto r2 = ((c2 & 0x0000ff) >> 0);
+  const auto g1 = ((c1 & 0x00ff00) >> 8);
+  const auto g2 = ((c2 & 0x00ff00) >> 8);
+  const auto b1 = ((c1 & 0xff0000) >> 16);
+  const auto b2 = ((c2 & 0xff0000) >> 16);
+  const int rf = r1 + (r2 - r1) * f;
+  const int gf = g1 + (g2 - g1) * f;
+  const int bf = b1 + (b2 - b1) * f;
   return 0xff000000              // alpha
-         | ((r1 & 0xff) << 0)    // red
-         | ((g1 & 0xff) << 8)    // green
-         | ((b1 & 0xff) << 16);  // blue
+         | ((rf & 0xff) << 0)    // red
+         | ((gf & 0xff) << 8)    // green
+         | ((bf & 0xff) << 16);  // blue
 };
 }  // namespace Color
