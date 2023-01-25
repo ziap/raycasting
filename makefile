@@ -5,8 +5,6 @@
 # Suitable for POSIX platforms (Linux, *BSD, OSX etc.).
 # Not tested but should also work with MinGW on Windows.
 # 
-# WebAssembly support is planned
-#
 # Requirements:
 #  - GNU Make
 #  - A C++ Compiler (clang is prefered and is the default)
@@ -46,10 +44,10 @@ ACTIVATE_VENV=. $(VENV_NAME)/bin/activate
 
 build: assets build/$(OUTPUT)
 debug: assets debug/$(OUTPUT)
-web: assets web/$(OUTPUT).wasm
+web: assets $(OUTPUT).wasm
 
 # Always recompile unless in debug mode
-.PHONY: build/$(OUTPUT) web/$(OUTPUT).wasm clean_assets clean 
+.PHONY: build/$(OUTPUT) $(OUTPUT).wasm clean_assets clean 
 
 # Directly build output file with .cpp files
 build/$(OUTPUT): $(INPUTS)
@@ -63,7 +61,7 @@ debug/$(OUTPUT): $(OUTPUTS)
 	@echo Compiling $@
 	@$(CXX) -o $@ $^ $(FLAGS) $(DEBUG_FLAGS) $(LIBRARIES)
 
-web/$(OUTPUT).wasm: $(INPUTS)
+$(OUTPUT).wasm: $(INPUTS)
 	@echo Compiling $@
 	@$(CXX) -o $@ $^ $(FLAGS) $(WASM_FLAGS)
 
@@ -86,7 +84,7 @@ clean: clean_assets
 	rm -rf $(OUTPUT_DIR)
 	rm -rf debug
 	rm -rf build
-	rm -f web/$(OUTPUT).wasm
+	rm -f $(OUTPUT).wasm
 
 $(VENV_NAME):
 	@echo Creating the virtual environment
