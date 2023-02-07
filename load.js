@@ -74,18 +74,17 @@ addEventListener("keyup", (e) => {
   }
 });
 
+let is_dragging = false
+document.addEventListener("mousedown", () => is_dragging = true)
+document.addEventListener("mouseup", () => is_dragging = false)
+
 document.addEventListener("mousemove", (e) => {
-  if (document.pointerLockElement == canvas) {
-    // Normalize pointer movement so the sensitivity stays the same even on
-    // smaller canvas
-    const scaled_height = parseFloat(getComputedStyle(canvas).height);
-    const scaled_width = parseFloat(getComputedStyle(canvas).width);
-    const normalized_x = (e.movementX * canvas.width) / scaled_width;
-    const normalized_y = (e.movementY * canvas.height) / scaled_height;
-    instance.exports.MouseMove(normalized_x, normalized_y);
-  } else {
-    canvas.requestPointerLock();
-  }
+  if (!is_dragging) return;
+  const scaled_height = parseFloat(getComputedStyle(canvas).height);
+  const scaled_width = parseFloat(getComputedStyle(canvas).width);
+  const normalized_x = (e.movementX * canvas.width) / scaled_width;
+  const normalized_y = (e.movementY * canvas.height) / scaled_height;
+  instance.exports.MouseMove(normalized_x, normalized_y);
 });
 
 // Start the game
