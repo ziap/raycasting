@@ -24,14 +24,16 @@ const image_data = new ImageData(
   canvas.width
 );
 
-let prev_time = performance.now();
-function frame() {
-  const time = performance.now();
-  document.title = "Raycast engine - FPS: " + ~~(1000 / (time - prev_time));
+let prev_time;
+function first(time) {
+  prev_time = time;
+  requestAnimationFrame(frame);
+}
+function frame(time) {
   instance.exports.GameLoop(time - prev_time);
   canvas.getContext("2d").putImageData(image_data, 0, 0);
   prev_time = time;
-  setTimeout(frame, 0);
+  requestAnimationFrame(frame);
 }
 
 addEventListener("keydown", (e) => {
@@ -89,5 +91,4 @@ document.addEventListener("mousemove", (e) => {
 
 // Start the game
 document.body.appendChild(canvas);
-
-setTimeout(frame, 0);
+requestAnimationFrame(first);
