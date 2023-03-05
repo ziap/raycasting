@@ -89,6 +89,10 @@ document.addEventListener("mousemove", (e) => {
   instance.exports.MouseMove(normalized_x, normalized_y);
 });
 
+// TODO: Implement touch control:
+// - Left side of screen: Move player
+// - Right side of screen: Move camera
+
 // Start the game
 document.body.appendChild(canvas);
 requestAnimationFrame(first);

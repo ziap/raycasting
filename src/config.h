@@ -27,12 +27,12 @@ constexpr int TEST_MAP[WIDTH * HEIGHT] = {
 }  // namespace Level
 
 namespace Display {
-constexpr int WIDTH = 800;
-constexpr int HEIGHT = 600;
+constexpr int WIDTH = 1280;
+constexpr int HEIGHT = 960;
 
-// TODO: Implement constexpr atan and stop hardcoding this
-// vfov = 360 * atan(tan(hfov * pi / 360) * height / width) / pi
 constexpr float FOV = 90;
+
+// vfov = 360 * atan(tan(hfov * pi / 360) * height / width) / pi
 constexpr float VFOV =
   360 * Math::atan(Math::tan(FOV * Math::pi / 360.0) * HEIGHT / WIDTH) /
   Math::pi;
