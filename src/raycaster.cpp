@@ -26,9 +26,9 @@
         texture_type::width])
 
 #define DIFFUSE_STRENGTH 0.5
-#define diffuse_shading(pixel, diffuse)                               \
-  (Color::Blend(                                                      \
-    black, pixel, (1 - DIFFUSE_STRENGTH) + diffuse * DIFFUSE_STRENGTH \
+#define diffuse_shading(pixel, diffuse)                                       \
+  (Color::Blend(                                                              \
+    black, pixel, 256 * ((1 - DIFFUSE_STRENGTH) + diffuse * DIFFUSE_STRENGTH) \
   ))
 
 // Use bitshift to avoid clang int division warning
@@ -91,13 +91,27 @@ void Raycaster::Render() {
     const auto tan_cast_dir =
       ((float)x / Config::Display::WIDTH - 0.5) * tan_hfov_x2;
 
-    const auto cast_dir = Math::atan(tan_cast_dir);
-    const auto angle_x = GameState::player_rot + cast_dir;
-    const auto sin_x = Math::sin(angle_x);
-    const auto cos_x = Math::cos(angle_x);
-    const auto cos_fix = 1 / Math::cos(cast_dir);
-    const auto cam_off =
-      GameState::player_pitch / Math::pi * 180 / half_fov * half_height;
+    // calculate sin(x) and cos(x) indirectly so we don't have to do
+    // sin/cos of atan(x)
+
+    // cos(x)^-2 = (tan(x)^2 + 1)
+    const auto inv_sqr_cos_dir = (tan_cast_dir * tan_cast_dir + 1);
+
+    // TODO: remove the tan and sqrt by precalculate the sine and cosine of the
+    // angle between 2 screen pixels and incrementally increase the sine and
+    // cosine of the cast angle with that using sin(x + y) and cos(x + y)
+    const auto inv_cos = Math::sqrt(inv_sqr_cos_dir);
+
+    const auto cos_dir = 1.0 / inv_cos;
+    const auto sin_dir = tan_cast_dir * cos_dir;
+
+    const auto sin_rot = GameState::player_rot_sin;
+    const auto cos_rot = GameState::player_rot_cos;
+
+    const auto sin_x = sin_dir * cos_rot + cos_dir * sin_rot;
+    const auto cos_x = cos_dir * cos_rot - sin_dir * sin_rot;
+
+    const auto cam_off = GameState::player_pitch / half_fov * half_height;
 
     // Raycasting using the DDA line generation algorithm
     const auto ray_start_x = GameState::player_x;
@@ -174,7 +188,7 @@ void Raycaster::Render() {
     const auto ray_end_y = ray_start_y + ray_dir_y * dist;
 
     if (found) {
-      const auto wall_height = half_height * proj_dist * 2 / dist * cos_fix;
+      const auto wall_height = half_height * proj_dist * 2 / dist * inv_cos;
       const auto offset =
         (Config::Display::HEIGHT - wall_height) * 0.5f - cam_off;
 
@@ -217,9 +231,9 @@ void Raycaster::Render() {
         }
       }
 
-      CastFloor(x, cam_off, sin_x, cos_x, cos_fix, wall_height / 2);
+      CastFloor(x, cam_off, sin_x, cos_x, inv_cos, wall_height / 2);
     } else {
-      CastFloor(x, cam_off, sin_x, cos_x, cos_fix, 0);
+      CastFloor(x, cam_off, sin_x, cos_x, inv_cos, 0);
     }
   }
 }

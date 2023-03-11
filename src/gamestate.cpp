@@ -8,15 +8,19 @@
 
 float GameState::player_x;
 float GameState::player_y;
-float GameState::player_rot;
+float GameState::player_rot_sin;
+float GameState::player_rot_cos;
 float GameState::player_pitch;
 
 int GameState::level[LEVEL_SIZE] = {0};
 
+static float player_rot = 0;
+
 void GameState::Init() {
   player_x = 1.5;
   player_y = 1.5;
-  player_rot = 0;
+  player_rot_sin = 0.0;
+  player_rot_cos = 1.0;
 
   for (auto i = 0; i < LEVEL_SIZE; i++) level[i] = Config::Level::TEST_MAP[i];
 }
@@ -24,17 +28,19 @@ void GameState::Init() {
 void GameState::Update(float delta_time) {
   if (Input::mouse_move) {
     Input::mouse_move = false;
-    // TODO: Use integer math to calculate player rotation
-    player_rot +=
-      (float)Input::mouse_x / Config::Display::WIDTH * 1000 * delta_time;
-    player_rot += Math::pi_x2;
-    player_rot -=
-      ((int)(player_rot / Math::pi_x2) + (player_rot < 0)) * Math::pi_x2;
+    constexpr auto w = Config::Display::WIDTH;
 
-    player_pitch +=
-      (float)Input::mouse_y / Config::Display::WIDTH * 1000 * delta_time;
-    player_pitch = Math::max(player_pitch, -Math::pi / 4);
-    player_pitch = Math::min(player_pitch, Math::pi / 4);
+    const auto delta_rot = (float)Input::mouse_x / w * 1000 * delta_time;
+
+    player_rot += delta_rot + Math::pi_x2;
+    player_rot -= (int)(player_rot / Math::pi_x2) * Math::pi_x2;
+
+    player_rot_sin = Math::sin(player_rot);
+    player_rot_cos = Math::cos(player_rot);
+
+    player_pitch += (float)Input::mouse_y / w / Math::pi * 180000 * delta_time;
+    player_pitch = Math::max(player_pitch, -45);
+    player_pitch = Math::min(player_pitch, 45);
   }
   const auto speed =
     Config::Player::SPEED * delta_time *
@@ -45,11 +51,13 @@ void GameState::Update(float delta_time) {
   const auto tile_x = (int)player_x + (player_x < 0);
   const auto tile_y = (int)player_y + (player_y < 0);
 
-  constexpr auto rad_90 = 90.0f * Math::deg2rad;
-  const auto sin_x = Math::sin(player_rot + rad_90);
-  const auto cos_x = Math::cos(player_rot + rad_90);
-  const auto sin_y = Math::sin(player_rot);
-  const auto cos_y = Math::cos(player_rot);
+  // sin(x + pi / 2) = cos(x)
+  // cos(x + pi / 2) = -sin(x)
+  const auto sin_x = player_rot_cos;
+  const auto cos_x = -player_rot_sin;
+
+  const auto sin_y = player_rot_sin;
+  const auto cos_y = player_rot_cos;
 
   // The difference between the currently position and the next position
   const auto next_diff_x = speed_x * sin_x + speed_y * sin_y;

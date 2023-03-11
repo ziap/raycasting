@@ -20,9 +20,9 @@
 OUTPUT=raycaster
 
 CXX=clang++
-FLAGS=-std=c++17 -Wall
+FLAGS=-std=c++17 -Wall -Wextra -pedantic
 LIBRARIES=$$(sdl2-config --libs)
-DEBUG_FLAGS=-g -Wextra
+DEBUG_FLAGS=-ggdb
 BUILD_FLAGS=-Ofast -march=native -mtune=native
 WASM_FLAGS=--target=wasm32 -Ofast -flto -fno-builtin -nostdlib \
 	-fvisibility=hidden -DUSE_WASM=true -Wl,--no-entry, -Wl,--strip-debug, \
